@@ -1,0 +1,38 @@
+@charset "UTF-8";
+
+ .header {
+    width: 680px;
+    display: flex;
+    flex-direction: row-reverse;
+    border-bottom: 1px solid gray;
+    padding: 0.5em;
+}
+.header-msg {
+    font-size: 0.1em;
+}
+nav{
+	width: 680px;
+	border-bottom: 1px solid gray;
+}
+
+nav ul li{
+	display: inline;
+	margin-left: 110px;
+}
+
+.li_click:link{
+    color: black;
+    font-size: 15px;
+    text-decoration: none;      
+}
+.li_click:visited{
+    color: black;
+    font-size: 15px;
+    text-decoration: none;
+}
+.li_click:hover{
+    color: crimson;
+    font-size: 15px;
+    text-decoration: none;
+}
+

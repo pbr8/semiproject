@@ -1,0 +1,129 @@
+@charset "UTF-8";
+
+header a {
+	text-decoration: none; /*밑줄 제거*/
+	color: inherit; /*방문 파란색 제거*/
+}
+
+header {
+	position: fixed; /*상단위에 고정으로 박아놓는 코드*/
+	top: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
+	background-color: white;
+	z-index: 99999; /*헤더를 최상단 앞에 보이게 하기 위해 필요한 코드*/
+}
+
+header section {
+	width: 1100px;
+	margin: 0px auto;
+}
+
+.login_join {
+	text-align: right;
+	height: 20px;
+}
+
+.search_text_bar {
+	width: 300px;
+	height: 36px;
+	border: 2.5px solid #ff0000;
+}
+
+header input:focus {
+	outline: none;
+}
+
+.main_text_color {
+	color: #ff0000;
+}
+
+header table {
+	text-align: center;
+	width: 1100px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+header table td {
+	width: 1900px;
+	height: 90px;
+	text-align: center;
+}
+
+header span:hover {
+	color: red;
+	transform: scale(1.2);
+	font-size: 18px;
+	font-weight: bold;
+}
+
+header span {
+	font-size: 15px;
+	transition: 0.3s;
+	color: black;
+}
+
+header img {
+	transition: 0.3s;
+	width: 70px;
+}
+
+header img:hover {
+	transform: scale(1.1);
+}
+
+header button {
+	background-color: white;
+	vertical-align: middle;
+}
+
+#s_hover:hover {
+	color: red;
+	font-size: 18px;
+	font-weight: bold;
+	border-bottom: 6px solid #ff0000;
+	transform: scale(1.2);
+}
+
+header ul li {
+	list-style: none;
+	font-size: 14px;
+}
+
+header ul li ul {
+	display: none;
+	/*고정기능*/
+	position: absolute;
+	font-size: 14px;
+	background: white;
+	margin: 0;
+	padding: 0;
+}
+
+header ul li:hover ul {
+	display: block;
+}
+
+header ul li ul li {
+	font-size: 14px;
+	/*시간 딜레이*/
+	transition: 0.3s;
+	padding: 20px;
+	text-align: center;
+	color: balck;
+	background-color: white;
+}
+
+header ul li ul li:hover {
+	color: white;
+	background: #ff0000;
+	font-size: 18px;
+	transform: scale(1.2);
+	font-weight: bold;
+}
+
+#pd {
+	padding: 20px;
+}

@@ -1,0 +1,112 @@
+@charset "UTF-8";
+#bodysection{
+	margin: 170px auto;
+	width: 900px;
+	border: 1px solid black;
+}
+#bodysection h2{
+	text-align: center;
+}
+#productUpload_tfSubject{
+	width: 600px;
+	height: 40px;
+	font-size: 18px;
+	padding: 5px 10px;
+}
+.productUpload_tfPrice{
+	height: 40px;
+	width: 180px;
+	font-size: 18px;
+	padding: 5px 10px;
+}
+#productUpload_list span{
+	font-size: 20px;
+}
+#productUpload_list select{
+	width: 150px;
+	height: 50px;
+	font-size: 15px;
+	padding-left: 5px;
+	border-radius: 5px 5px;
+	border-color: gray;
+}
+#productUpload_list_ta{
+	font-size: 18px;
+	padding: 5px 10px;
+}
+#productUpload_buttons{
+	text-align: center;
+	margin-bottom: 10px;
+}
+.button_size{
+	width: 100px;
+	height: 50px;
+	font-size: 17px;
+	color: white;
+	background-color: #DC143C;
+	border-radius: 7px;
+	border: 1px solid #DCDCDC;
+}
+.button_size:active{
+	width: 100px;
+	height: 50px;
+	font-size: 17px;
+	color: white;
+	background-color: #8B0000;
+	border-radius: 7px;
+	border: 1px solid black;
+}
+#div{
+	width: 900px;
+	margin: 0px auto;
+	background-color: white;
+	padding-top: 30px;
+	padding-bottom: 30px;
+	margin-bottom: 20px;
+}
+#productUpload_list ul{
+	width: 680px;
+	margin: 70px auto;
+}
+#productUpload_list li{
+	list-style-type: none;
+	margin-bottom: 30px;
+}
+#step{
+	width: 80px;
+	height: 40px;
+	margin-left: 20px;
+}
+#fstep, #sstep{
+	border: 1px solid #DCDCDC;
+	font-size: 20px;
+	text-align: center;
+	color: gray;
+}
+#fstep{
+	background-color: #ff0000;
+	color: white;
+}
+#imgInput{
+	background-color: #DCDCDC;
+	padding: 10px;
+	height: 25px;
+}
+fieldset{
+	width: 300px;
+	height: 320px;
+	padding: 20px;
+	margin-left: 130px;
+	margin-bottom: 70px;
+	text-align: center;
+}
+fieldset img{
+	margin-bottom: 20px;
+}
+#imgThumb{
+	width: 250px;
+	height: 250px;
+	border-radius: 15px;
+	border: 1px solid #DCDCDC;
+	padding: 2px;
+}
