@@ -41,6 +41,11 @@ label{
 #art{
 	padding-left:330px;
 }
+#fo{
+
+padding-top:250px;
+
+}
 </style>
 </head>
 <%@include file="/header.jsp" %>
@@ -67,4 +72,7 @@ label{
 	</article>
 </section>
 </body>
+<article id="fo">
+<%@include file="/footer.jsp"%>
+</article>
 </html>

@@ -110,7 +110,7 @@
 </head>
 <%
    int totalcnt = user_dao.getTotalCnt();    //총 게시물 수
-   int listsize = 5;    //보여줄 리스트 수
+   int listsize = 10;    //보여줄 리스트 수
    int pagesize = 5;   //보여줄 페이지 수
    
    String s_cp = request.getParameter("cp");      //페이지가 1일 땐 값이 없으므로 조건을 줘야 함
@@ -145,48 +145,11 @@
                        <th>상세 정보</th>
                    </tr>
                 </thead>
-                <%
-                String select_value = request.getParameter("select_value");
-               String searchVal = request.getParameter("searchVal");
-                
-                if(searchVal==null||searchVal.equals("")){
-                %>
-                <tfoot>
-                   <tr>
-                      <td colspan="6" align="center">
-                         <%
-                     if(usergroup != 0){
-                     %>
-                        <a href="admin_page_member_all.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %>">&lt;&lt;</a>
-                     <%   
-                     }
-                     %>
-                     
-                     <%
-                        for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
-                     %>
-                        &nbsp;&nbsp;<a href="admin_page_member_all.jsp?cp=<%=i %>"><%=i %></a>&nbsp;&nbsp;
-                     <%      
-                           if(i == totalpage) break;
-                        }
-                     %>
-                     
-                     <%
-                        if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
-                     %>
-                           <a href="admin_page_member_all.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %>">&gt;&gt;</a>
-                     <%       
-                        }
-                     %>
-                      </td>
-                   </tr>
-                </tfoot>
-                <%   
-                }
-            %>
-                
                 <tbody>
                    <%
+                   String select_value = request.getParameter("select_value");
+                   String searchVal = request.getParameter("searchVal");
+                   
                    List<UserDTO> dtos = user_dao.userList(cp, listsize, select_value, searchVal);
                    if(dtos==null||dtos.size()==0){
                    %>
@@ -196,6 +159,10 @@
                    </tr>
                    <%   
                    }else{
+                	   if(searchVal != null){
+                		   totalcnt = dtos.size();
+                		   totalpage = (totalcnt / listsize) + 1;
+                	   }
                       for(UserDTO dto : dtos){
                     %>
                          <tr>
@@ -211,6 +178,30 @@
                    }
                    %>
                 </tbody>
+                <tfoot>
+                   <tr>
+                      <td colspan="6" align="center">
+                         <%
+                     if(usergroup != 0){
+                     %>
+                        <a href="admin_page_member_all.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %>">&lt;&lt;</a>
+                     <%   
+                     }
+                     for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
+                     %>
+                        &nbsp;&nbsp;<a href="admin_page_member_all.jsp?cp=<%=i %>"><%=i %></a>&nbsp;&nbsp;
+                     <%      
+                           if(i == totalpage) break;
+                        }
+                     if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
+                     %>
+                           <a href="admin_page_member_all.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %>">&gt;&gt;</a>
+                     <%       
+                        }
+                     %>
+                      </td>
+                   </tr>
+                </tfoot>
             </table>
             <span>
                 <input type="submit" value="삭제" class="b_css">
@@ -230,5 +221,4 @@
         </form>
     </div>
 </body>
-
 </html>

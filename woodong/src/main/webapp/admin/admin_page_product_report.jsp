@@ -4,7 +4,6 @@
 <%@ page import="woodong.product.report.*" %>
 
 <%
-   String getListsize = request.getParameter("getListsize");
    String select = request.getParameter("select");
 %>
 
@@ -123,45 +122,13 @@
                 location.href = 'admin_page_bbs_report.jsp';
             }
         }
-        
-       //<select> 박스에서 원하는 값에 select 지정
-       const selectA = () => {
-             let getListsize = document.getElementById("getListsize");
-              for(var i=0; i<getListsize.length; i++){
-                  if(getListsize[i].value=='<%=getListsize%>'){
-                     getListsize[i].selected = true;
-                  }
-              }
-          }
-       
-        const listsize = () => {
-            const getListsize = document.getElementById('getListsize').value;
-            
-           
-            if(getListsize==5){
-               location.href = 'admin_page_product_report.jsp?getListsize='+getListsize;
-            }else if(getListsize==10){
-                location.href = 'admin_page_product_report.jsp?getListsize='+getListsize;
-            }else if(getListsize==15){
-                location.href = 'admin_page_product_report.jsp?getListsize='+getListsize;
-            }else if(getListsize==20){
-                location.href = 'admin_page_product_report.jsp?getListsize='+getListsize;
-            }
-           
-        }
     </script>
 </head>
-<%
-   //처음 들어가면 null이니 기본값 5로 세팅
-   if(getListsize==null){
-      getListsize = "5";
-   }
+<%	String selectVal = request.getParameter("selectVal");
+	String searchVal = request.getParameter("searchVal");
    
-   //숫자로 변환 
-   int get_listsize = Integer.parseInt(getListsize);
-   
-   int totalcnt = product_report_dao.getTotalCnt();    //총 게시물 수
-   int listsize = get_listsize;    //보여줄 리스트 수
+   int totalcnt = product_report_dao.getTotalCnt(selectVal, searchVal);    //총 게시물 수
+   int listsize = 10;    //보여줄 리스트 수
    int pagesize = 5;   //보여줄 페이지 수
    
    String s_cp = request.getParameter("cp");      //페이지가 1일 땐 값이 없으므로 조건을 줘야 함
@@ -194,14 +161,6 @@
                    <option value="게시글 신고">게시글 신고</option>
                </select>
             </span>
-            <span id="select_num">
-               <select id="getListsize" onchange="listsize()">
-                   <option value="5">5개씩 보기</option>
-                   <option value="10">10개씩 보기</option>
-                   <option value="15">15개씩 보기</option>
-                   <option value="20">20개씩 보기</option>
-               </select>
-            </span>
         </div>
         <form name="admin_page_product_report_delete" action="admin_page_product_report_delete_ok.jsp" onsubmit="return realDelete()">
             <table id="table">
@@ -216,46 +175,6 @@
                        <th>신고 상세 내용</th>
                    </tr>
                 </thead>
-                <%
-                String selectVal = request.getParameter("selectVal");
-                String searchVal = request.getParameter("searchVal");
-                
-                if(searchVal==null||searchVal.equals("")){
-                %>
-                <tfoot>
-                   <tr>
-                      <td colspan="6" align="center">
-                         <%
-                     if(usergroup != 0){
-                     %>
-                        <a href="admin_page_product_report.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %>">&lt;&lt;</a>
-                     <%   
-                     }
-                     %>
-                     
-                     <%
-                        for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
-                     %>
-                        &nbsp;&nbsp;<a href="admin_page_product_report.jsp?cp=<%=i %>"><%=i %></a>&nbsp;&nbsp;
-                     <%      
-                           if(i == totalpage) break;
-                        }
-                     %>
-                     
-                     <%
-                        if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
-                     %>
-                           <a href="admin_page_product_report.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %>">&gt;&gt;</a>
-                     <%       
-                        }
-                     %>
-                      </td>
-                   </tr>
-                </tfoot>
-                <%   
-                }
-            %>
-                
                 <tbody>
                      <%
                    List<ProductReportDTO> dtos = product_report_dao.productReportList(cp, listsize, selectVal, searchVal);
@@ -263,11 +182,11 @@
                    %>
                    <tr>
                        <td id="ck_td"><input type="checkbox"></td>
-                       <td colspan="5">등록된 신고글이 없습니다.</td>
+                       <td colspan="6">등록된 신고글이 없습니다.</td>
                    </tr>
                    <%   
                    }else{
-                      for(ProductReportDTO dto : dtos){
+                        for(ProductReportDTO dto : dtos){
                     %>
                             <tr>
                              <td><input type="checkbox" name="ck" value="<%=dto.getP_report_idx()%>"></td>
@@ -285,6 +204,44 @@
                    }
                    %>
                 </tbody>
+                <tfoot>
+                   <tr>
+                      <td colspan="7" align="center">
+                     <%
+	                    String selectQueryParam = "";
+	                  	String searchQueryParam = "";
+	                   	if(selectVal != null) {
+	                   		selectQueryParam = "&selectVal=" + selectVal;
+	                   	}
+	                   	if(searchVal != null) {
+	                   		searchQueryParam = "&searchVal=" + searchVal;
+	                   	}
+                     if(usergroup != 0){
+                     %>
+                        <a href="admin_page_product_report.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %><%=selectQueryParam %><%=searchQueryParam %>">&lt;&lt;</a>
+                     <%   
+                     }
+                     %>
+                     
+                     <%
+                        for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
+                     %>
+                        &nbsp;&nbsp;<a href="admin_page_product_report.jsp?cp=<%=i %><%=selectQueryParam %><%=searchQueryParam %>"><%=i %></a>&nbsp;&nbsp;
+                     <%      
+                           if(i == totalpage) break;
+                        }
+                     %>
+                     
+                     <%
+                        if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
+                     %>
+                           <a href="admin_page_product_report.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %><%=selectQueryParam %><%=searchQueryParam %>">&gt;&gt;</a>
+                     <%       
+                        }
+                     %>
+                      </td>
+                   </tr>
+                </tfoot>
             </table>
             <span>
                 <input type="submit" value="삭제" class="b_css">

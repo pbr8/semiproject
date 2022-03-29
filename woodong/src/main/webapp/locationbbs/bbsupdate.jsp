@@ -1,10 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="woodong.bbs.*" %>
-<jsp:useBean id="bdto" class="woodong.bbs.BbsDTO" scope="page"></jsp:useBean>
-<jsp:setProperty property="*" name="bdto"/>
 <jsp:useBean id="bdao" class="woodong.bbs.BbsDAO" scope="session"></jsp:useBean>
+<%
+String s_bbs_idx=request.getParameter("bbs_idx");
 
+if(s_bbs_idx==null||s_bbs_idx.equals("")){
+	s_bbs_idx="0";
+}
+int bbs_idx=Integer.parseInt(s_bbs_idx);
+
+BbsDTO bdto=bdao.bbsContent(bbs_idx);
+
+if(bdto==null){
+	%>
+	<script>
+	alert('잘못된 접근입니다.');
+	location.href='bbsList.jsp';
+	</script>
+	<%
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -40,6 +56,11 @@ label{
 #art{
 	padding-left:330px;
 }
+#fo{
+
+padding-top:250px;
+
+}
 </style>
 </head>
 <%@include file="/header.jsp" %>
@@ -50,9 +71,9 @@ label{
 	<form name="update" action="bbsupdate_ok.jsp?">
 		<fieldset id="fs">
 			<h3 align="center">게시글 수정</h3>
-			<input type=hidden name="bbs_idx" value="<%=request.getParameter("bbs_idx") %>">
+			<input type=hidden name="bbs_idx" value="<%=bdto.getBbs_idx()%>">
 			<label>제목 : </label>
-			<input type="text" name="bbs_subject" value="<%=request.getParameter("bbs_subject") %>" style="width: 698px;"><hr>
+			<input type="text" name="bbs_subject" value="<%=bdto.getBbs_subject()%>" style="width: 698px;"><hr>
 			<textarea name="bbs_content"><%=bdto.getBbs_content().replaceAll("<br>", "\n") %></textarea>
 		</fieldset>
 		<br>
@@ -64,4 +85,7 @@ label{
 	</article>
 </section>
 </body>
+<article id="fo">
+<%@include file="/footer.jsp"%>
+</article>
 </html>

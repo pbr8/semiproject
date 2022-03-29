@@ -18,86 +18,115 @@ public class BbsDAO {
 	
 	/**게시글 전체 출력 메서드*/
 	public List<BbsDTO> bbsList(int cp, int ls, String selectVal, String searchVal) {
-		try {
-			
-			conn = woodong.db.WoodongDB.getConn();
-			
-			int start = (cp - 1) * ls + 1;
-			int end = cp * ls;
-			
-			String sql = "";
-			if(selectVal==null) {
-				sql = "select * from ("
-		                  + "select rownum as rnum, a.* from ("
-		                  + "select * from sp_bbs ss left join sp_user su on ss.user_idx = su.user_idx "
-		                  + "order by ss.bbs_ref desc, ss.bbs_step asc, ss.bbs_admin desc, ss.bbs_idx desc) a) b "
-		                  + "where rnum >= ? and rnum <= ?";
-				
-				ps = conn.prepareStatement(sql);
-				ps.setInt(1, start);
-				ps.setInt(2, end);
-			}else {
-				if(selectVal.equals("bbs_idx")) {
-					sql = "select * "
-							+ "from sp_user su, sp_bbs ss "
-							+ "where su.user_idx = ss.user_idx and ss.bbs_idx = ? ";
-					
-				}else {
-					sql = "select * "
-							+ "from sp_user su, sp_bbs ss "
-							+ "where su.user_idx = ss.user_idx and su.user_nickname = ? ";
-				}
-				
-				ps = conn.prepareStatement(sql);
-				ps.setString(1, searchVal);
-			}
-			
-			rs = ps.executeQuery();
-				
-			List<BbsDTO> list = new ArrayList<BbsDTO>();
-			if(rs.next()) {
-				do {
-					int bbs_idx = rs.getInt("bbs_idx");
-					String bbs_subject = rs.getString("bbs_subject");
-					String bbs_content = rs.getString("bbs_content");
-					int bbs_readnum = rs.getInt("bbs_readnum");
-					java.sql.Date bbs_writedate = rs.getDate("bbs_writedate");
-					int bbs_ref = rs.getInt("bbs_ref");
-					int bbs_lev = rs.getInt("bbs_lev");
-					int bbs_step = rs.getInt("bbs_step");
-					int bbs_admin = rs.getInt("bbs_admin");
-					int user_idx = rs.getInt("user_idx");
-					String user_nickname = rs.getString("user_nickname");
-				
-					list.add(new BbsDTO(bbs_idx, bbs_subject, bbs_content, bbs_readnum, bbs_writedate, bbs_ref, bbs_lev, bbs_step, bbs_admin, user_idx, user_nickname));
-					
-				}while(rs.next());
-				return list;
-			}
-			return null;
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}finally {
-				try {
-					if(rs != null) rs.close();
-					if(ps != null) ps.close();
-					if(conn != null) conn.close();
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
-	}
+	      try {
+	         
+	         conn = woodong.db.WoodongDB.getConn();
+	         
+	         int start = (cp - 1) * ls + 1;
+	         int end = cp * ls;
+	         
+	         String sql = "";
+	         if(searchVal==null) {
+	        	 
+	            sql = "select * from ("
+	                  + "select rownum as rnum, a.* from ("
+	                  + "select * from sp_bbs ss left join sp_user su on ss.user_idx = su.user_idx "
+	                  + "order by ss.bbs_admin desc, ss.bbs_ref desc, ss.bbs_step asc) a) b "
+	                  + "where rnum >= ? and rnum <= ?";
+	            
+	            ps = conn.prepareStatement(sql);
+	            ps.setInt(1, start);
+	            ps.setInt(2, end);
+	         }else {
+	            if(selectVal.equals("bbs_idx")) {
+	               sql = "select * "
+	                     + "from sp_user su, sp_bbs ss "
+	                     + "where su.user_idx = ss.user_idx and ss.bbs_idx = ? ";
+	               
+	               ps = conn.prepareStatement(sql);
+	               ps.setString(1, searchVal);
+	            }else {
+	               sql = "select * from ("
+	               		+ "select rownum as rnum, a.* from ("
+	               		+ "select * from sp_bbs ss left join sp_user su on ss.user_idx = su.user_idx "
+	               		+ "where su.user_nickname like '%"+searchVal+"%') a) b "
+	               		+ "where rnum >= ? and rnum <= ?";
+	               
+	               ps = conn.prepareStatement(sql);
+		           ps.setInt(1, start);
+		           ps.setInt(2, end);
+	            }
+	         }
+	         
+	         rs = ps.executeQuery();
+	            
+	         List<BbsDTO> list = new ArrayList<BbsDTO>();
+	         
+	         if(rs.next()) {
+	            do {
+	            	
+	               int bbs_idx = rs.getInt("bbs_idx");
+	               String bbs_subject = rs.getString("bbs_subject");
+	               String bbs_content = rs.getString("bbs_content");
+	               int bbs_readnum = rs.getInt("bbs_readnum");
+	               java.sql.Date bbs_writedate = rs.getDate("bbs_writedate");
+	               int bbs_ref = rs.getInt("bbs_ref");
+	               int bbs_lev = rs.getInt("bbs_lev");
+	               int bbs_step = rs.getInt("bbs_step");
+	               int bbs_admin = rs.getInt("bbs_admin");
+	               int user_idx = rs.getInt("user_idx");
+	               String user_nickname = rs.getString("user_nickname");
+	            
+	               
+	               list.add(new BbsDTO(bbs_idx, bbs_subject, bbs_content, bbs_readnum, bbs_writedate, bbs_ref, bbs_lev, bbs_step, bbs_admin, user_idx, user_nickname));
+	               
+	            }while(rs.next());
+	            return list;
+	         }
+	         return null;
+	            
+	         } catch (Exception e) {
+	            e.printStackTrace();
+	            return null;
+	         }finally {
+	            try {
+	               if(rs != null) rs.close();
+	               if(ps != null) ps.close();
+	               if(conn != null) conn.close();
+	            } catch (Exception e2) {
+	               e2.printStackTrace();
+	            }
+	         }
+	   }
 	
 	/**검색 메서드*/
 	
 	/**등록된 판매 글 수 구하는 메소드*/
-	public int getTotalCnt() {
+	public int getTotalCnt(String selectVal, String searchVal) {
 		try {
 			conn = woodong.db.WoodongDB.getConn();
-			String sql = "select count(*) from sp_bbs";
-			ps = conn.prepareStatement(sql);
+			
+			String sql = "";
+			if(searchVal==null) {
+				sql = "select count(*) from sp_bbs";
+				ps = conn.prepareStatement(sql);
+			}else {
+				if(selectVal.equals("bbs_idx")) {
+		               sql = "select count(*) "
+		                     + "from sp_user su, sp_bbs ss "
+		                     + "where su.user_idx = ss.user_idx and ss.bbs_idx = ? ";
+		               
+		               ps = conn.prepareStatement(sql);
+		               ps.setString(1, searchVal);
+		            }else {
+		               sql = "select count(*) "
+		                     + "from sp_user su, sp_bbs ss "
+		                     + "where su.user_idx = ss.user_idx and su.user_nickname like '%"+searchVal+"%'";
+		               
+		               ps = conn.prepareStatement(sql);
+		            }
+			}
+			
 			rs = ps.executeQuery();
 			
 			rs.next();
@@ -224,7 +253,7 @@ public class BbsDAO {
 	public int getMaxRef() {
 		try {
 			
-			String sql = "select max(ref) from sp_bbs";
+			String sql = "select max(bbs_ref) from sp_bbs";
 			ps = conn.prepareStatement(sql);
 			rs = ps.executeQuery();
 			
@@ -249,7 +278,7 @@ public class BbsDAO {
 	}
 	
 	/**글쓰기 관련 메서드*/
-	public int bbsWrite(BbsDTO dto, int user_idx) {
+	public int adminBbsWrite(BbsDTO dto) {
 		try {
 			
 			conn = woodong.db.WoodongDB.getConn();
@@ -257,12 +286,11 @@ public class BbsDAO {
 			//conn을 호출하고 getMaxRef()를 호출하면 getMaxRef()에서 따로 conn을 호출 안 해도 사용 가능!
 			int maxref = getMaxRef();
 			
-			String sql = "insert into sp_bbs values(sp_bbs_idx_seq.nextval, ?, ?, 0, sysdate, ?, 0 ,0 , 1, ?)";		//마지막에 관리자 user_idx값 집어넣기
+			String sql = "insert into sp_bbs values(sp_bbs_idx_seq.nextval, ?, ?, 0, sysdate, ?, 0 ,0 , 1, 1)";		//마지막에 관리자 user_idx값 집어넣기
 			ps = conn.prepareStatement(sql);
 			ps.setString(1, dto.getBbs_subject());
 			ps.setString(2, dto.getBbs_content());
 			ps.setInt(3, maxref + 1);
-			ps.setInt(4, user_idx);
 			
 			int count = ps.executeUpdate();
 			return count;
@@ -279,7 +307,30 @@ public class BbsDAO {
 			}
 		}
 	}
-	
+	//글쓰기 메서드
+		public int localbbsWrite(BbsDTO dto,int user_idx) {
+			try {
+				conn=woodong.db.WoodongDB.getConn();
+				int maxref=localgetMaxRef();
+				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,?)";
+				ps=conn.prepareStatement(sql);
+				ps.setString(1, dto.getBbs_subject());
+				ps.setString(2, dto.getBbs_content());
+				ps.setInt(3, maxref+1);
+				ps.setInt(4, user_idx);
+				int count=ps.executeUpdate();
+				return count;
+			}catch(Exception e) {
+				e.printStackTrace();
+				return -1;
+			}finally {
+				try {
+					if(ps!=null)ps.close();
+					if(conn!=null)conn.close();
+				}catch(Exception e2) {}
+			}
+		}
+			
 	//ref 마지막 구하는 메서드
 		public int localgetMaxRef() {
 			try {
@@ -306,7 +357,7 @@ public class BbsDAO {
 			try {
 				conn=woodong.db.WoodongDB.getConn();
 				int maxref=localgetMaxRef();
-				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,21)";
+				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,2)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
 				ps.setString(2, dto.getBbs_content());
@@ -324,7 +375,7 @@ public class BbsDAO {
 			}
 		}
 		//step 수정 메서드
-		public void updateStep(int ref,int step) {
+		public void localUpdateStep(int ref,int step) {
 			try {
 				String sql="update sp_bbs set bbs_step=bbs_step+1 where bbs_ref=? and bbs_step>=?";
 				ps=conn.prepareStatement(sql);
@@ -340,17 +391,18 @@ public class BbsDAO {
 			}
 		}
 		//답변글 쓰는 메서드
-		public int bbsReWriter(BbsDTO dto) {
+		public int localBbsReWriter(BbsDTO dto,int user_idx) {
 			try {
 				conn=woodong.db.WoodongDB.getConn();
-				updateStep(dto.getBbs_ref(),dto.getBbs_step()+1);
-				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,?,?,0,21)";
+				localUpdateStep(dto.getBbs_ref(),dto.getBbs_step()+1);
+				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,?,?,0,?)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
 				ps.setString(2, dto.getBbs_content());
 				ps.setInt(3, dto.getBbs_ref());
 				ps.setInt(4, dto.getBbs_lev()+1);
 				ps.setInt(5, dto.getBbs_step()+1);
+				ps.setInt(6, user_idx);
 				int count=ps.executeUpdate();
 				return count;
 			}catch(Exception e) {
@@ -384,60 +436,60 @@ public class BbsDAO {
 				}catch(Exception e2) {}
 			}
 		}
-		//목록 메소드
-		public ArrayList<BbsDTO> localbbsList(int cp,int ls,String selectVal,String searchVal){
-			try {
-				conn=woodong.db.WoodongDB.getConn();
-				
-				 int start=(cp-1)*ls+1;
-				 int end=cp*ls;
-				 
-				 String sql="";
-				 
-				 if(selectVal==null) {
-					 sql="select * from ("
-						 		+ "select rownum as rnum,a.* from ("
-						 		+ "select * from sp_bbs order by bbs_admin desc, bbs_ref desc, bbs_step asc) a) b where rnum>=? and rnum<=?";
-					 ps=conn.prepareStatement(sql);
-					 ps.setInt(1, start);
-					 ps.setInt(2, end);
-				 }else {
-					 sql = "select * from sp_bbs bs,sp_user su where su.user_idx=bs.useridx and su."+selectVal+"=?";
-					 ps=conn.prepareStatement(sql);
-					 ps.setString(1, searchVal);
-				 }
-				
-				 
-				 rs=ps.executeQuery();
-				 
-				 ArrayList<BbsDTO> arr=new ArrayList<BbsDTO>();
-				 while(rs.next()) {
-					 int idx=rs.getInt("bbs_idx");
-					 String subject=rs.getString("bbs_subject");
-					 String content=rs.getString("bbs_content");
-					 int readnum=rs.getInt("bbs_readnum");
-					 java.sql.Date writedate=rs.getDate("bbs_writedate");
-					 int ref=rs.getInt("bbs_ref");
-					 int lev=rs.getInt("bbs_lev");
-					 int step=rs.getInt("bbs_step");
-					 int admin=rs.getInt("bbs_admin");
-					 int user_idx=rs.getInt("user_idx");
-					 
-					 BbsDTO dto=new BbsDTO(idx, subject, content, readnum, writedate, ref, lev, step, admin, user_idx);
-					 arr.add(dto);
-				 }
-				 return arr;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}finally {
-				try {
-					if(rs!=null)rs.close();
-					if(ps!=null)ps.close();
-					if(conn!=null)conn.close();
-				}catch(Exception e2) {}
-			}
-		}
+//		//목록 메소드
+//		public ArrayList<BbsDTO> localbbsList(int cp,int ls,String selectVal,String searchVal){
+//			try {
+//				conn=woodong.db.WoodongDB.getConn();
+//				
+//				 int start=(cp-1)*ls+1;
+//				 int end=cp*ls;
+//				 
+//				 String sql="";
+//				 
+//				 if(selectVal==null) {
+//					 sql="select * from ("
+//						 		+ "select rownum as rnum,a.* from ("
+//						 		+ "select * from sp_bbs order by bbs_admin desc, bbs_ref desc, bbs_step asc) a) b where rnum>=? and rnum<=?";
+//					 ps=conn.prepareStatement(sql);
+//					 ps.setInt(1, start);
+//					 ps.setInt(2, end);
+//				 }else {
+//					 sql = "select * from sp_bbs bs,sp_user su where su.user_idx=bs.useridx and su."+selectVal+"=?";
+//					 ps=conn.prepareStatement(sql);
+//					 ps.setString(1, searchVal);
+//				 }
+//				
+//				 
+//				 rs=ps.executeQuery();
+//				 
+//				 ArrayList<BbsDTO> arr=new ArrayList<BbsDTO>();
+//				 while(rs.next()) {
+//					 int idx=rs.getInt("bbs_idx");
+//					 String subject=rs.getString("bbs_subject");
+//					 String content=rs.getString("bbs_content");
+//					 int readnum=rs.getInt("bbs_readnum");
+//					 java.sql.Date writedate=rs.getDate("bbs_writedate");
+//					 int ref=rs.getInt("bbs_ref");
+//					 int lev=rs.getInt("bbs_lev");
+//					 int step=rs.getInt("bbs_step");
+//					 int admin=rs.getInt("bbs_admin");
+//					 int user_idx=rs.getInt("user_idx");
+//					 
+//					 BbsDTO dto=new BbsDTO(idx, subject, content, readnum, writedate, ref, lev, step, admin, user_idx);
+//					 arr.add(dto);
+//				 }
+//				 return arr;
+//			}catch(Exception e) {
+//				e.printStackTrace();
+//				return null;
+//			}finally {
+//				try {
+//					if(rs!=null)rs.close();
+//					if(ps!=null)ps.close();
+//					if(conn!=null)conn.close();
+//				}catch(Exception e2) {}
+//			}
+//		}
 		//본문(content) 보기 메서드
 		public BbsDTO bbsContent(int idx) {
 			try {

@@ -7,11 +7,15 @@
 <jsp:useBean id="hdto" class="woodong.heart.HeartDTO" scope="page"></jsp:useBean>
 <jsp:setProperty property="*" name="hdto"/>
 <jsp:useBean id="hdao" class="woodong.heart.HeartDAO" scope="session"></jsp:useBean>
+<jsp:useBean id="udto" class="woodong.user.UserDTO" scope="page"></jsp:useBean>
+<jsp:setProperty property="*" name="udto"/>
+<jsp:useBean id="udao" class="woodong.user.UserDAO" scope="session"></jsp:useBean>
 <%
+String initSize="15";
+String userid=(String)session.getAttribute("sid");
 String getListsize = request.getParameter("getListsize");
 String selectVal=request.getParameter("selectVal");
 String searchVal=request.getParameter("searchVal");
-
 %>
 <!DOCTYPE html>
 <html>
@@ -45,12 +49,25 @@ const listsize = () => {
     }
 	
 }
+window.onload = function(){
+    let getListsize = document.getElementById("getListsize");
+    <%if(getListsize==null){
+    	getListsize=initSize;
+    }
+    %>
+    for(var i=0; i<getListsize.length; i++){
+        if(getListsize[i].value=='<%=getListsize%>'){
+            getListsize[i].selected = true;
+        }
+    }
+}
 </script>
 <style>
 body{
 	width: 1350px;
-	margin-left: 350px;
+	margin: 0px auto;
 	padding-top: 200px;
+	margin-bottom: 50px;
 }
 h2{
 	text-align: center;
@@ -144,12 +161,9 @@ nav li{
 </style>
 </head>
 <%
-if(getListsize==null){
-	getListsize = "15";
-}
 int get_listsize = Integer.parseInt(getListsize);
 
-int totalCnt=bdao.localgetTotalCnt();//총 게시물수
+int totalCnt=bdao.getTotalCnt(selectVal, searchVal);//총 게시물수
 int listSize=get_listsize;//보여줄 리스트수
 int pageSize=5;//보여줄 페이지수
 String s_cp=request.getParameter("cp");
@@ -165,6 +179,18 @@ int userGroup=cp/pageSize;
 if(cp%pageSize==0)userGroup--;
 %>
 <body>
+<%
+String csid=(String)session.getAttribute("sid");
+if(csid==null){
+	%>
+	<script>
+	window.alert('로그인 후 이용해주세요!');
+	location.href='/woodong/index.jsp';
+	</script>
+	<%
+	return;
+}
+%>
 <%@include file="/header.jsp" %>
 <%@include file="/subview.jsp" %>
 <section>
@@ -192,11 +218,11 @@ if(cp%pageSize==0)userGroup--;
 		</thead>
 			<tbody style="width: 1000px">
 			<%
-			ArrayList<BbsDTO> arr=bdao.localbbsList(cp,listSize,selectVal,searchVal);
+			List<BbsDTO> arr=bdao.bbsList(cp,listSize,selectVal,searchVal);
 			if(arr==null||arr.size()==0){
 				%>
 				<tr class="tr">
-				 <td colspan="5" align="center">
+				 <td colspan="6" align="center">
 				 등록된 게시글이 없습니다.
 				</tr>
 				<%
@@ -215,7 +241,7 @@ if(cp%pageSize==0)userGroup--;
 						%>
 						<a style="text-decoration: none; color:black;" href="locationbbscontent.jsp?bbs_idx=<%=arr.get(i).getBbs_idx() %>&bbs_readnum=<%=arr.get(i).getBbs_readnum()%>">
 						<%=arr.get(i).getBbs_subject() %></a></td>
-						<td>임시</td>
+						<td><%=arr.get(i).getUser_nickname() %></td>
 						<td style="width:100px" id="wd"><%=arr.get(i).getBbs_writedate() %></td>
 						<td style="text-align:center;"><%=arr.get(i).getBbs_readnum() %></td>
 						<td style="text-align:center;"><%=heartcount %></td>
@@ -240,9 +266,9 @@ if(userGroup!=0){
 for(int i=(userGroup*pageSize+1);
 		i<=(userGroup*pageSize+pageSize);i++){
 	if(i==cp){
-		%><td class="cp"><a href="bbsList.jsp?cp=<%=i%>"><%=i%></a></td><%
+		%><td class="cp"><a href="bbsList.jsp?cp=<%=i%>&getListsize=<%=getListsize%>"><%=i%></a></td><%
 	}else {
-		%><td class="pageList"><a href="bbsList.jsp?cp=<%=i%>"><%=i%></a></td><%
+		%><td class="pageList"><a href="bbsList.jsp?cp=<%=i%>&getListsize=<%=getListsize%>"><%=i%></a></td><%
 	}
 	if(i==totalPage)break;
 }
@@ -261,8 +287,8 @@ if(userGroup!=(totalPage/pageSize-(totalPage%pageSize==0?1:0))){
 		<form>
 		<table id="foottable">
 			<tr>
-				<td><select id="selectVal" name="selectsub">
-				<option value="user_id">아이디</option>
+				<td><select name="selectVal">
+				<option value="bbs_idx">게시글 번호</option>
 				<option value="user_nickname">닉네임</option>
 				</select></td>
 				<td><input type="text" name="searchVal"></td>
@@ -274,4 +300,5 @@ if(userGroup!=(totalPage/pageSize-(totalPage%pageSize==0?1:0))){
 	</article>
 </section>
 </body>
+<%@include file="/footer.jsp" %>
 </html>

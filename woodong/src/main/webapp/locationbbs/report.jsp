@@ -37,6 +37,9 @@ label{
 #art{
 	padding-left:330px;
 }
+#fo{
+	padding-top:250px;
+}
 </style>
 </head>
 <%@include file="/header.jsp" %>
@@ -47,7 +50,7 @@ label{
 	<form name="report" action="report_ok.jsp">
 		<fieldset id="fs">
 			<h3 align="center">게시글 신고</h3>
-			<input type=hidden name="bbs_idx" value="<%=request.getParameter("bbs_idx") %>">
+			<input type="hidden" name="bbs_idx" value="<%=request.getParameter("bbs_idx") %>">
 			<label>게시물 제목 : <%=request.getParameter("bbs_subject") %></label>
 			<textarea name="rcontent" placeholder="신고사유를 작성해주십시오."></textarea>
 		</fieldset>
@@ -59,5 +62,8 @@ label{
 		</form>
 	</article>
 </section>
+<article id="fo">
+	<%@include file="/footer.jsp" %>
+</article>
 </body>
 </html>

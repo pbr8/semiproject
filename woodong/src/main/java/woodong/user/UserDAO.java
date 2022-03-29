@@ -398,68 +398,64 @@ public class UserDAO {
 	}
 	
 	//모든 회원 출력&검색 회원 출력
-		public List<UserDTO> userList(int cp, int ls, String select_value, String searchVal) {
-			try {
-				
-				conn = woodong.db.WoodongDB.getConn();
-				
-				int start = (cp - 1) * ls + 1;
-				int end = cp * ls;
-				
-				String sql = "";
-				if(select_value==null) {
-					sql = "select * from "
-							+ "(select rownum as rnum, a.* from "
-							+ "(select * from sp_user order by user_idx desc) a) b "
-							+ "where rnum >= ? and rnum <= ?";
-					
-					ps = conn.prepareStatement(sql);
-					ps.setInt(1, start);
-					ps.setInt(2, end);
-				}else {
-					sql = "select * from sp_user where "+select_value+" = ?";
-					
-					ps = conn.prepareStatement(sql);
-					ps.setString(1, searchVal);
-				}
-				
-				
-				
-				rs = ps.executeQuery();
-				
-				List<UserDTO> list = new ArrayList<UserDTO>();
-				if(rs.next()) {
-					do {
-						int user_idx = rs.getInt("user_idx");
-						String user_id = rs.getString("user_id");
-						String user_pwd = rs.getString("user_pwd");
-						String user_name = rs.getString("user_name");
-						String user_resident_num = rs.getString("user_resident_num");
-						String user_nickname = rs.getString("user_nickname");
-						String user_email = rs.getString("user_email");
-						String user_addr = rs.getString("user_addr");
-						java.sql.Date user_joindate = rs.getDate("user_joindate");
-						
-						list.add(new UserDTO(user_idx, user_id, user_pwd, user_name, user_resident_num, user_nickname, user_email, user_addr, user_joindate));
-						
-					}while(rs.next());
-					return list;
-				}
-				return null;
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}finally {
-				try {
-					if(rs != null) rs.close();
-					if(ps != null) ps.close();
-					if(conn != null) conn.close();
-				} catch (Exception e2) {
-					e2.printStackTrace();
-				}
-			}
-		}
+	   public List<UserDTO> userList(int cp, int ls, String select_value, String searchVal) {
+	      try {
+	         
+	         conn = woodong.db.WoodongDB.getConn();
+	         
+	         int start = (cp - 1) * ls + 1;
+	         int end = cp * ls;
+	         
+	         String sql = "";
+	         if(searchVal==null) {
+	            sql = "select * from "
+	                  + "(select rownum as rnum, a.* from "
+	                  + "(select * from sp_user order by user_idx desc) a) b "
+	                  + "where rnum >= ? and rnum <= ?";
+	            
+	            ps = conn.prepareStatement(sql);
+	            ps.setInt(1, start);
+	            ps.setInt(2, end);
+	         }else {
+	            sql = "select * from sp_user where "+select_value+" like '%"+searchVal+"%'";
+	            
+	            ps = conn.prepareStatement(sql);
+	         }
+	         rs = ps.executeQuery();
+	         
+	         List<UserDTO> list = new ArrayList<UserDTO>();
+	         if(rs.next()) {
+	            do {
+	               int user_idx = rs.getInt("user_idx");
+	               String user_id = rs.getString("user_id");
+	               String user_pwd = rs.getString("user_pwd");
+	               String user_name = rs.getString("user_name");
+	               String user_resident_num = rs.getString("user_resident_num");
+	               String user_nickname = rs.getString("user_nickname");
+	               String user_email = rs.getString("user_email");
+	               String user_addr = rs.getString("user_addr");
+	               java.sql.Date user_joindate = rs.getDate("user_joindate");
+	               
+	               list.add(new UserDTO(user_idx, user_id, user_pwd, user_name, user_resident_num, user_nickname, user_email, user_addr, user_joindate));
+	               
+	            }while(rs.next());
+	            return list;
+	         }
+	         return null;
+	         
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	         return null;
+	      }finally {
+	         try {
+	            if(rs != null) rs.close();
+	            if(ps != null) ps.close();
+	            if(conn != null) conn.close();
+	         } catch (Exception e2) {
+	            e2.printStackTrace();
+	         }
+	      }
+	   }
 		
 		/**회원 상세 정보 출력*/
 		public UserDTO user_nickname_search(String nickname) {
@@ -556,6 +552,7 @@ public class UserDAO {
 			}
 		}
 		
+		/**유저idx로 유저 정보 가져오기*/
 		public UserDTO findUserInfoByUserIdx(int uidx) {
 			try {
 				conn=woodong.db.WoodongDB.getConn();

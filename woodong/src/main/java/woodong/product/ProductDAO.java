@@ -6,7 +6,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.io.*;
-import com.oreilly.servlet.multipart.*;
 import java.util.*;
 
 public class ProductDAO {
@@ -20,92 +19,118 @@ public class ProductDAO {
 	}
 	
 	//물품 게시글 전체 출력&검색 출력
-	public List<ProductDTO> productList(int cp, int ls, String selectVal, String searchVal){
-		try {
-			
-		conn = woodong.db.WoodongDB.getConn();
-		
-		int start = (cp - 1) * ls + 1;
-		int end = cp * ls;
-		
-		String sql = "";
-		if(selectVal==null) {
-			sql = "select * from "
-					+ "(select rownum as rnum, a.* from "
-					+ "(select sp.product_idx , sp.product_subject , "
-					+ "sp.product_writedate,  "
-					+ "sp.product_tel, sp.product_category, "
-					+ "sp.product_price, sp.product_content, sp.product_readnum, sp.product_state, sp.user_idx, "
-					+ "sp.product_img, su.user_name, su.user_nickname , su.user_addr  "
-					+ "from sp_product sp "
-					+ "left join sp_user su on sp.user_idx = su.user_idx order by sp.product_idx desc) a) b "
-					+ "where rnum >= ? and rnum <= ?";
-			
-			ps = conn.prepareStatement(sql);
-			ps.setInt(1, start);
-			ps.setInt(2, end);
-		}else {
-			if(selectVal.equals("user_nickname")) {
-				sql = "select * from sp_user su, sp_product sp where su.user_idx = sp.user_idx and su.user_nickname = ?";
-				
-			}else {
-				sql = "select * from sp_user su, sp_product sp where su.user_idx = sp.user_idx and sp.product_idx = ?";
-			}
-			
-			ps = conn.prepareStatement(sql);
-			ps.setString(1, searchVal);
-		}
-		
-		rs = ps.executeQuery();
-			
-		List<ProductDTO> list = new ArrayList<ProductDTO>();
-		if(rs.next()) {
-			do {
-				
-				int product_idx = rs.getInt("product_idx");
-				String product_subject = rs.getString("product_subject");
-				String product_tel = rs.getString("product_tel");
-				String product_category = rs.getString("product_category");
-				int product_price = rs.getInt("product_price");
-				String product_content = rs.getString("product_content");
-				int product_readnum = rs.getInt("product_readnum");
-				java.sql.Date writedate = rs.getDate("product_writedate");
-				int product_state = rs.getInt("product_state");
-				String product_img = rs.getString("product_img");
-				int user_idx = rs.getInt("user_idx");
-				String user_name = rs.getString("user_name");
-				String user_nickname = rs.getString("user_nickname");
-				String user_addr = rs.getString("user_addr");
-				
-				list.add(new ProductDTO(
-						product_idx, product_subject, product_tel, product_category, product_price, product_content, product_readnum, writedate, product_state, 
-						product_img, user_idx, user_name, user_nickname, user_addr));
-				
-			}while(rs.next());
-			return list;
-		}
-		return null;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		}finally {
-			try {
-				if(rs != null) rs.close();
-				if(ps != null) ps.close();
-				if(conn != null) conn.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
+	   public List<ProductDTO> productList(int cp, int ls, String selectVal, String searchVal){
+	      try {
+	         
+	      conn = woodong.db.WoodongDB.getConn();
+	      
+	      int start = (cp - 1) * ls + 1;
+	      int end = cp * ls;
+	      
+	      String sql = "";
+	      if(searchVal==null) {
+	         sql = "select * from "
+	               + "(select rownum as rnum, a.* from "
+	               + "(select sp.product_idx , sp.product_subject , "
+	               + "sp.product_writedate,  "
+	               + "sp.product_tel, sp.product_category, "
+	               + "sp.product_price, sp.product_content, sp.product_readnum, sp.product_state, sp.user_idx, "
+	               + "sp.product_img, su.user_name, su.user_nickname , su.user_addr  "
+	               + "from sp_product sp "
+	               + "left join sp_user su on sp.user_idx = su.user_idx order by sp.product_idx desc) a) b "
+	               + "where rnum >= ? and rnum <= ?";
+	         
+	         ps = conn.prepareStatement(sql);
+	         ps.setInt(1, start);
+	         ps.setInt(2, end);
+	      }else {
+	         if(selectVal.equals("user_nickname")) {
+	            sql = "select * from "
+	 	               + "(select rownum as rnum, a.* from "
+		               + "(select sp.product_idx , sp.product_subject , "
+		               + "sp.product_writedate,  "
+		               + "sp.product_tel, sp.product_category, "
+		               + "sp.product_price, sp.product_content, sp.product_readnum, sp.product_state, sp.user_idx, "
+		               + "sp.product_img, su.user_name, su.user_nickname , su.user_addr  "
+		               + "from sp_product sp "
+		               + "left join sp_user su on sp.user_idx = su.user_idx "
+		               + "where su.user_nickname like '%"+searchVal+"%') a) b "
+		               + "where rnum >= ? and rnum <= ?";
+	            
+	            ps = conn.prepareStatement(sql);
+		        ps.setInt(1, start);
+		        ps.setInt(2, end);
+	         }else {
+	            sql = "select * from sp_user su, sp_product sp where su.user_idx = sp.user_idx and sp.product_idx = ?";
+	            ps = conn.prepareStatement(sql);
+	            ps.setString(1, searchVal);
+	         }
+	      }
+	      rs = ps.executeQuery();
+	         
+	      List<ProductDTO> list = new ArrayList<ProductDTO>();
+	      if(rs.next()) {
+	         do {
+	            
+	            int product_idx = rs.getInt("product_idx");
+	            String product_subject = rs.getString("product_subject");
+	            String product_tel = rs.getString("product_tel");
+	            String product_category = rs.getString("product_category");
+	            int product_price = rs.getInt("product_price");
+	            String product_content = rs.getString("product_content");
+	            int product_readnum = rs.getInt("product_readnum");
+	            java.sql.Date writedate = rs.getDate("product_writedate");
+	            int product_state = rs.getInt("product_state");
+	            String product_img = rs.getString("product_img");
+	            int user_idx = rs.getInt("user_idx");
+	            String user_name = rs.getString("user_name");
+	            String user_nickname = rs.getString("user_nickname");
+	            String user_addr = rs.getString("user_addr");
+	            
+	            list.add(new ProductDTO(
+	                  product_idx, product_subject, product_tel, product_category, product_price, product_content, product_readnum, writedate, product_state, 
+	                  product_img, user_idx, user_name, user_nickname, user_addr));
+	            
+	         }while(rs.next());
+	         return list;
+	      }
+	      return null;
+	         
+	      } catch (Exception e) {
+	         e.printStackTrace();
+	         return null;
+	      }finally {
+	         try {
+	            if(rs != null) rs.close();
+	            if(ps != null) ps.close();
+	            if(conn != null) conn.close();
+	         } catch (Exception e2) {
+	            e2.printStackTrace();
+	         }
+	      }
+	   }
 	
 	/**등록된 판매 글 수 구하는 메소드*/
-	public int getTotalCnt() {
+	public int getTotalCnt(String selectVal, String searchVal) {
 		try {
 			conn = woodong.db.WoodongDB.getConn();
-			String sql = "select count(*) from sp_product";
-			ps = conn.prepareStatement(sql);
+			
+			String sql = "";
+			if(searchVal==null) {
+				sql = "select count(*) from sp_product";
+				ps = conn.prepareStatement(sql);
+			}else{
+				if(selectVal.equals("user_nickname")) {
+		            sql = "select count(*) from sp_user su, sp_product sp where su.user_idx = sp.user_idx and su.user_nickname like '%"+searchVal+"%'";
+		            
+		            ps = conn.prepareStatement(sql);
+		         }else {
+		            sql = "select count(*) from sp_user su, sp_product sp where su.user_idx = sp.user_idx and sp.product_idx = ?";
+		            ps = conn.prepareStatement(sql);
+		            ps.setString(1, searchVal);
+		         }
+			}
+			
 			rs = ps.executeQuery();
 			
 			rs.next();
@@ -347,7 +372,6 @@ public class ProductDAO {
 				pdto.setProduct_price(rs.getInt("product_price"));
 				pdto.setUser_nickname(rs.getString("user_nickname"));
 				pdto.setProduct_state(rs.getInt("product_state"));
-				
 				arr.add(pdto);
 			}
 			return arr;
@@ -364,7 +388,6 @@ public class ProductDAO {
 				// TODO: handle exception
 			}
 		}
-		
 	}
 	
 	/**상품 정보*/
@@ -532,12 +555,18 @@ public class ProductDAO {
 	}
 	
 	/**카테고리 리스트 총 판매글 수*/
-	public int getTotalCnt(String pCategory) {
+	public int getTotalCntC(String pCategory) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select count(*) from sp_product where product_category=?";
-			ps=conn.prepareStatement(sql);
-			ps.setString(1, pCategory);
+			String sql="";
+			if(pCategory.equals("전체")) {
+				sql="select count(*) from sp_product";
+				ps=conn.prepareStatement(sql);
+			}else {
+				sql="select count(*) from sp_product where product_category=?";
+				ps=conn.prepareStatement(sql);
+				ps.setString(1, pCategory);
+			}
 			rs=ps.executeQuery();
 			rs.next();
 			return rs.getInt(1)==0?1:rs.getInt(1);
@@ -555,6 +584,55 @@ public class ProductDAO {
 			}
 		}
 	}
+	
+	/**해당 유저 총 판매글 수*/
+	public int getTotalCntU(int uidx) {
+		try {
+			conn=woodong.db.WoodongDB.getConn();
+			String sql="select count(*) from sp_product where user_idx=?";
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, uidx);
+			rs=ps.executeQuery();
+			rs.next();
+			return rs.getInt(1)==0?1:rs.getInt(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 4;
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(ps!=null)ps.close();
+				if(conn!=null)conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+	}
+	
+	
+	/**검색 총 판매글 수*/
+	public int getTotalCntS(String keyword) {
+		try {
+			conn=woodong.db.WoodongDB.getConn();
+			String sql="select count(*) from sp_product where product_subject like '%"+keyword+"%'";
+			ps=conn.prepareStatement(sql);
+			rs=ps.executeQuery();
+			rs.next();
+			return rs.getInt(1)==0?1:rs.getInt(1);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 1;
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(ps!=null)ps.close();
+				if(conn!=null)conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+	}
+	
 	
 	/**내가 판매 중인 물품 총 갯수*/
 	public int getMyTotalCnt(int uidx) {
@@ -653,6 +731,7 @@ public class ProductDAO {
 		}
 	}
 	
+	/**판매완료 버튼*/
 	public int soldout(int uidx, int pidx) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
@@ -675,6 +754,7 @@ public class ProductDAO {
 		}
 	}
 	
+	/**저장된 이미지 이름*/
 	public ArrayList<String> savedImgNames(){
 		try {
 			conn=woodong.db.WoodongDB.getConn();
@@ -703,48 +783,59 @@ public class ProductDAO {
 	}
 	
 	/**키워드 검색 결과 리스트*/
-	   public ArrayList<ProductDTO> main_Product_Search(String searchWord) {
-	         
-	         try {
-	            conn = woodong.db.WoodongDB.getConn();
-	            String sql = "select * from sp_product, sp_user where sp_product.user_idx=sp_user.user_idx and product_subject like ?";
+    public ArrayList<ProductDTO> main_Product_Search(String searchWord, int cp, int listSize) {
+         
+         try {
+        	int start=(cp-1)*listSize+1;
+ 			int end=cp*listSize;
+ 			
+            conn = woodong.db.WoodongDB.getConn();
+            String sql = "select * from "
+            		+ "(select rownum as rnum, a.* from "
+            		+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
+            		+ "from sp_product, sp_user "
+            		+ "where sp_product.user_idx=sp_user.user_idx and product_subject like ? "
+            		+ "order by product_state desc) a) b "
+            		+ "where rnum between ? and ?";
 
-	            ps = conn.prepareStatement(sql);
-	            ps.setString(1, "%" + searchWord + "%");
-	            rs = ps.executeQuery();
-	               
-	            
-	            ArrayList<ProductDTO> search = new ArrayList<ProductDTO>();
-	            
-	            while (rs.next()) {
-	               ProductDTO dto = new ProductDTO();
-	               dto.setProduct_idx(rs.getInt("product_idx"));
-	            dto.setProduct_img(rs.getString("product_img"));
-	            dto.setProduct_subject(rs.getString("product_subject"));
-	            dto.setProduct_price(rs.getInt("product_price"));
-	            dto.setUser_nickname(rs.getString("user_nickname"));
-	            dto.setProduct_state(rs.getInt("product_state"));
-	            
-	            search.add(dto);
-	            }
-	            return search;
-	         } catch (Exception e) {
-	            e.printStackTrace();
-	            return null;
-	         } finally {
-	            try {
-	               if (rs != null)
-	                  rs.close();
-	               if (ps != null)
-	                  ps.close();
-	               if (conn != null)
-	                  conn.close();
-	            } catch (Exception e) {
-	               // TODO: handle exception
-	            }
-	         }
+            ps = conn.prepareStatement(sql);
+            ps.setString(1, "%" + searchWord + "%");
+            ps.setInt(2, start);
+            ps.setInt(3, end);
+            rs = ps.executeQuery();
+               
+            
+            ArrayList<ProductDTO> search = new ArrayList<ProductDTO>();
+            
+            while (rs.next()) {
+               ProductDTO dto = new ProductDTO();
+               dto.setProduct_idx(rs.getInt("product_idx"));
+            dto.setProduct_img(rs.getString("product_img"));
+            dto.setProduct_subject(rs.getString("product_subject"));
+            dto.setProduct_price(rs.getInt("product_price"));
+            dto.setUser_nickname(rs.getString("user_nickname"));
+            dto.setProduct_state(rs.getInt("product_state"));
+            
+            search.add(dto);
+            }
+            return search;
+         } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+         } finally {
+            try {
+               if (rs != null)
+                  rs.close();
+               if (ps != null)
+                  ps.close();
+               if (conn != null)
+                  conn.close();
+            } catch (Exception e) {
+               // TODO: handle exception
+            }
+         }
 
-	      }
+      }
 	
 	/** 마이 페이지 찜목록 출력 메소드 */
 	public ProductDTO[] my_Page_Zzim_List(int uidx) {
@@ -960,12 +1051,13 @@ public class ProductDAO {
 	public ArrayList<ProductDTO> subView(){
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from sp_product,sp_user where sp_product.user_idx=sp_user.user_idx order by sp_product.product_readnum desc";
+			String sql="select * from sp_product,sp_user where sp_product.user_idx=sp_user.user_idx order by sp_product.product_state desc, sp_product.product_readnum desc";
 			ps=conn.prepareStatement(sql);
 			rs=ps.executeQuery();
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
 			while(rs.next()) {
 				ProductDTO dto=new ProductDTO();
+				dto.setProduct_idx(rs.getInt("product_idx"));
 				dto.setProduct_img(rs.getString("product_img"));
 				dto.setProduct_subject(rs.getString("product_subject"));
 				dto.setProduct_price(rs.getInt("product_price"));
@@ -987,12 +1079,24 @@ public class ProductDAO {
 		}
 	}
 	
-	public ArrayList<ProductDTO> samesellerListPage(int uidx){
+	/**동일 유저 다른 판매상품 리스트 페이지*/
+	public ArrayList<ProductDTO> samesellerListPage(int uidx, int cp, int listSize){
 		try {
+			int start=(cp-1)*listSize+1;
+			int end=cp*listSize;
+			
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from sp_product, sp_user where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? order by product_state desc";
+			String sql="select * from "
+					+ "(select rownum as rnum, a.* from "
+					+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
+					+ "from sp_product, sp_user "
+					+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? "
+					+ "order by product_state desc) a) b "
+					+ "where rnum between ? and ?";
 			ps=conn.prepareStatement(sql);
 			ps.setInt(1, uidx);
+			ps.setInt(2, start);
+			ps.setInt(3, end);
 			rs=ps.executeQuery();
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
 			while(rs.next()) {
@@ -1022,23 +1126,5 @@ public class ProductDAO {
 	}
 	
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 

@@ -20,6 +20,11 @@ h3{
 	margin-bottom: 40px;
 	width: 150px;
 }
+#fsize:hover{
+	width: 160px;
+	height: 320px;
+	border: 1px solid black;
+}
 .product_card img{
 	width: 150px;
 	height: 150px;
@@ -49,13 +54,23 @@ h3{
 #rightside{
 	float: right;
 	padding-left: 100px; 
+	margin-bottom: 50px;
 }
 #fsize{
 	width: 160px;
 	height: 320px;
+	border: 1px solid #DCDCDC;
 }
 #ftext{
 	width: 190px;
+	border: 1px solid #DCDCDC;
+}
+#hotlist{
+	text-decoration: none;
+	color:black;
+}
+#hotlist:hover{
+	color: red;
 }
 </style>
 <article id="rightside">
@@ -95,7 +110,7 @@ h3{
 							out.println("&nbsp;&nbsp;");
 						}
 						%>
-						<a style="text-decoration: none; color:black;" href="locationbbscontent.jsp?bbs_idx=<%=rarr.get(i).getBbs_idx() %>&bbs_readnum=<%=rarr.get(i).getBbs_readnum()%>">
+						<a id="hotlist" href="locationbbscontent.jsp?bbs_idx=<%=rarr.get(i).getBbs_idx() %>&bbs_readnum=<%=rarr.get(i).getBbs_readnum()%>">
 						<%=rarr.get(i).getBbs_subject() %></a></td>
 					</tr>
 					<%

@@ -88,6 +88,6 @@
             </tr>
         </table>
     </div>
-    <div id="b_back"><input type="button" value="목록" onclick="location.href='admin_page_bbs_report.jsp%<%=cp %>'" class="b_css"></div>
+    <div id="b_back"><input type="button" value="목록" onclick="location.href='admin_page_bbs_report.jsp?<%=cp %>'" class="b_css"></div>
 </body>
 </html>

@@ -9,20 +9,19 @@
 <%
 
 
-String pCategory=request.getParameter("pCategory");
-if(pCategory==null||pCategory.equals("")){
-	pCategory="전체";
-}
-
-String keyword=request.getParameter("search_text");
-
 String s_uidx=request.getParameter("uidx");
 if(s_uidx==null||s_uidx.equals("")){
 	s_uidx="0";
 }
 int uidx=Integer.parseInt(s_uidx);
+
+String pCategory=request.getParameter("pCategory");
+
+String keyword=request.getParameter("search_text");
+
 UserDTO udto=udao.findUserInfoByUserIdx(uidx);
-int totalCnt=pdao.getTotalCnt(pCategory);
+
+int totalCnt=0;
 int listSize=12;
 int pageSize=5;
 
@@ -30,8 +29,20 @@ String s_cp=request.getParameter("cp");
 if(s_cp==null||s_cp.equals("")){
 	s_cp="1";
 }
-
 int cp=Integer.parseInt(s_cp);
+
+
+ArrayList<ProductDTO> arr=null;
+if(keyword!=null&&!keyword.equals("null")){
+	arr=pdao.main_Product_Search(keyword, cp, listSize);
+	totalCnt=pdao.getTotalCntS(keyword);
+}else if(uidx>0){
+	arr=pdao.samesellerListPage(uidx, cp, listSize);
+	totalCnt=pdao.getTotalCntU(uidx);
+}else{
+	arr=pdao.productList(pCategory,cp,listSize);
+	totalCnt=pdao.getTotalCntC(pCategory);
+}
 
 int totalPage=(totalCnt%listSize)==0?(totalCnt/listSize):(totalCnt/listSize)+1;
 int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
@@ -49,11 +60,11 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
 <section id="bodysection">
   <article>
   	<%
-     if(keyword!=null){
+     if(keyword!=null&&!keyword.equals("null")){
         %>
         <h2>"<%=keyword %>" 검색 결과 목록</h2>
         <%
-     }else if(uidx!=0){
+     }else if(uidx>0){
         %>
         <h2>"<%=udto.getUser_nickname() %>" 님의 판매 상품 목록</h2>
         <%
@@ -67,14 +78,6 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
   <article>
     <div id="popular_list">
     <%
-    ArrayList<ProductDTO> arr=null;
-    if(keyword!=null){
-    	arr=pdao.main_Product_Search(keyword);
-    }else if(uidx!=0){
-    	arr=pdao.samesellerListPage(uidx);
-    }else{
-    	arr=pdao.productList(pCategory,cp,listSize);
-    }
     if(arr==null||arr.size()==0){
     	%>
     	<h3 style="text-align: center;">
@@ -146,11 +149,11 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
 		for(int i=(userGroup*pageSize)+1; i<=(userGroup+1)*pageSize; i++){ 
 			if(i==cp){
 				%>
-	    		<td class="cp"><a href="productList.jsp?cp=<%=i %>"><%=i %></a></td>
+	    		<td class="cp"><a href="productList.jsp?cp=<%=i %>&uidx=<%=uidx%>&pCategory=<%=pCategory%>&search_text=<%=keyword%>"><%=i %></a></td>
 	    		<%
 	    	}else{
 	    		%>
-		    	<td class="pageList"><a href="productList.jsp?cp=<%=i %>"><%=i %></a></td>
+		    	<td class="pageList"><a href="productList.jsp?cp=<%=i %>&uidx=<%=uidx%>&pCategory=<%=pCategory%>&search_text=<%=keyword%>"><%=i %></a></td>
 		    	<%
 		    }
 			if(i==totalPage)break;

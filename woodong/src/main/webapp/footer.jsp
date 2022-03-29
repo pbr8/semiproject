@@ -12,7 +12,6 @@ footer {
 
 footer section {
 	padding: 60px;
-	width: 1000px;
 	margin: 0px auto;
 }
 
@@ -49,7 +48,7 @@ footer a {
 }
 </style>
 
-<footer>
+<footer style="clear: both;">
 	<section>
 		<table>
 			<tr>

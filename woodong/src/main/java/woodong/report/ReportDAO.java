@@ -22,7 +22,7 @@ public int addReport(int bbs_idx,int user_idx,String rcontent) {
 		rs=ps.executeQuery();
 		int count=0;
 		if(!rs.next()) {
-			sql="insert into sp_bbs_report values(sp_bbs_report_seq.nextval,?,?,?,sysdate)";
+			sql="insert into sp_bbs_report values(sp_bbs_report_bbs_report_idx.nextval,?,?,?,sysdate)";
 			ps=conn.prepareStatement(sql);
 			ps.setInt(1, bbs_idx);
 			ps.setInt(2, user_idx);

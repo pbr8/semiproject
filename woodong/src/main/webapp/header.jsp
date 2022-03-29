@@ -63,11 +63,9 @@ String sid=(String)session.getAttribute("sid");
 						</ul></td>
 					<td>&nbsp;</td>
 					<td colspan="2"><a href="/woodong/index.jsp"><img
-							src="/woodong/img/logo.png"></a>
-					<td><h1 class="main_text_color">우동마켓</h1>
-						<h5 class="main_text_color">우리동네 중고거래</h5></td>
+							src="/woodong/img/logo_title.png" style="width: 200px;"></a>
+					</td>
 					<td>
-
 						<form name="search_form" action="/woodong/product/productList.jsp">
 							<input type="text" placeholder="상품명을 검색해보세요!"
 								class="search_text_bar" name="search_text">
@@ -78,7 +76,7 @@ String sid=(String)session.getAttribute("sid");
 						</form>
 					</td>
 					<td id="s_hover"><a href="/woodong/product/productUpload.jsp"><span>판매하기</span></a></td>
-					<td id="s_hover"><a href="/woodong/locationbbs/bbsList.jsp"><span>지역게시판</span></a></td>
+					<td id="s_hover"><a href="/woodong/locationbbs/bbsList.jsp"><span>자유게시판</span></a></td>
 					<td id="s_hover"><a href="/woodong/mypage/mypage.jsp"><span>마이페이지</span></a></td>
 				</tr>
 			</table>

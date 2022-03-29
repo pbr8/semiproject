@@ -4,8 +4,7 @@
 <%@ page import="woodong.bbs.report.*" %>
 <jsp:useBean id="bbs_report_dao" class="woodong.bbs.report.BbsReportDAO" scope="session"></jsp:useBean>
 <%
-	String getListsize = request.getParameter("getListsize");
-	String select = request.getParameter("select");
+   String select = request.getParameter("select");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -78,61 +77,36 @@
             text-align: center;
         }
         .b_css{
-			border: 1px solid darkgray;
-			background-color: rgb(0,0,0,0);
-			color: gray;
-			padding: 5px;
-		}
-		#select_num{
-			margin-left: 30em; 
-		}
+         border: 1px solid darkgray;
+         background-color: rgb(0,0,0,0);
+         color: gray;
+         padding: 5px;
+      }
+      #select_num{
+         margin-left: 30em; 
+      }
     </style>
     <script>
-		const realDelete = () => {
-			let answer = confirm('정말 삭제하시겠습니까?');
-				if(answer){
-					return true;
-				}else{
-					return false;
-				}
-		}
-		
-		//<select> 박스에서 원하는 값에 select 지정
-		const selectA = () => {
-		   	let getListsize = document.getElementById("getListsize");
-		       for(var i=0; i<getListsize.length; i++){
-		           if(getListsize[i].value=='<%=getListsize%>'){
-		        	   getListsize[i].selected = true;
-		           }
-		       }
-		   }
-		
-	    const listsize = () => {
-	        const getListsize = document.getElementById('getListsize').value;
-	        
-	        if(getListsize==5){
-	        	location.href = 'admin_page_bbs_report.jsp?getListsize='+getListsize;
-	        }else if(getListsize==10){
-	            location.href = 'admin_page_bbs_report.jsp?getListsize='+getListsize;
-	        }else if(getListsize==15){
-	            location.href = 'admin_page_bbs_report.jsp?getListsize='+getListsize;
-	        }else if(getListsize==20){
-	            location.href = 'admin_page_bbs_report.jsp?getListsize='+getListsize;
-	        }
-	    	
-	    }
-    
-	    const allClick = () => {
-	        if(document.getElementById('ck_all').checked){
-	            for(let i=0;i<document.admin_page_bbs_report.ck.length;i++){
-	                document.admin_page_bbs_report.ck[i].checked = true;
-	        	}
-	        }else{
-	        	for(let i=0;i<document.admin_page_bbs_report.ck.length;i++){
-	                document.admin_page_bbs_report.ck[i].checked = false;
-	        	}
-	        }
-	    }
+	    const realDelete = () => {
+	        let answer = confirm('정말 삭제하시겠습니까?');
+	           if(answer){
+	              return true;
+	           }else{
+	              return false;
+	           }
+	     }
+   
+       const allClick = () => {
+           if(document.getElementById('ck_all').checked){
+               for(let i=0;i<document.admin_page_bbs_report.ck.length;i++){
+                   document.admin_page_bbs_report.ck[i].checked = true;
+              }
+           }else{
+              for(let i=0;i<document.admin_page_bbs_report.ck.length;i++){
+                   document.admin_page_bbs_report.ck[i].checked = false;
+              }
+           }
+       }
 
         const bbsList = () => {
             const select_result = document.getElementById('bbss').value;
@@ -151,31 +125,26 @@
     </script>
 </head>
 <%
-	//처음 들어가면 null이니 기본값 5로 세팅
-	if(getListsize==null){
-		getListsize = "5";
-	}
+	String selectVal = request.getParameter("selectVal");
+	String searchVal = request.getParameter("searchVal");
 	
-	//숫자로 변환 
-	int get_listsize = Integer.parseInt(getListsize);
-
-	int totalcnt = bbs_report_dao.getTotalCnt(); 	//총 게시물 수
-	int listsize = get_listsize; 	//보여줄 리스트 수
-	int pagesize = 5;	//보여줄 페이지 수
-	
-	String s_cp = request.getParameter("cp");		//페이지가 1일 땐 값이 없으므로 조건을 줘야 함
-	if(s_cp==null||s_cp.equals("")){
-		s_cp = "1";
-	}
-	int cp = Integer.parseInt(s_cp);		//현재 사용자가 있는 페이지 
-	
-	int totalpage = (totalcnt / listsize) + 1;	//총 페이지 수
-	if(totalcnt%listsize == 0) totalpage--;		//딱 떨어질 때를 조건으로 줘서 -1을 해줌
-	
-	//사용자의 현재 그룹
-	int usergroup = (cp / pagesize);
-	if(cp%pagesize == 0) usergroup--;				//그룹화할 때 딱 떨어지는 애들은 같은 그룹보다 1씩 더 많기 때문에 이렇게 조건을 줘야 함
-	
+   int totalcnt = bbs_report_dao.getTotalCnt(selectVal, searchVal);    //총 게시물 수
+   int listsize = 10;    //보여줄 리스트 수
+   int pagesize = 5;   //보여줄 페이지 수
+   
+   String s_cp = request.getParameter("cp");      //페이지가 1일 땐 값이 없으므로 조건을 줘야 함
+   if(s_cp==null||s_cp.equals("")){
+      s_cp = "1";
+   }
+   int cp = Integer.parseInt(s_cp);      //현재 사용자가 있는 페이지 
+   
+   int totalpage = (totalcnt / listsize) + 1;   //총 페이지 수
+   if(totalcnt%listsize == 0) totalpage--;      //딱 떨어질 때를 조건으로 줘서 -1을 해줌
+   
+   //사용자의 현재 그룹
+   int usergroup = (cp / pagesize);
+   if(cp%pagesize == 0) usergroup--;            //그룹화할 때 딱 떨어지는 애들은 같은 그룹보다 1씩 더 많기 때문에 이렇게 조건을 줘야 함
+   
 %>
 <body onload="selectA()">
 <%@ include file="adminPageHeader.jsp" %>
@@ -185,98 +154,90 @@
 
     <div id="div_table">
         <div>
-        	<span>
-	            <select id="bbss" onchange="bbsList()">
-	                <option value="물품">물품</option>
-	                <option value="게시글">게시글</option>
-	                <option value="물품 신고">물품 신고</option>
-	                <option value="게시글 신고" selected>게시글 신고</option>
-	            </select>
-            </span>
-            <span id="select_num">
-	            <select id="getListsize" onchange="listsize()">
-	                <option value="5">5개씩 보기</option>
-	                <option value="10">10개씩 보기</option>
-	                <option value="15">15개씩 보기</option>
-	                <option value="20">20개씩 보기</option>
-	            </select>
+           <span>
+               <select id="bbss" onchange="bbsList()">
+                   <option value="물품">물품</option>
+                   <option value="게시글">게시글</option>
+                   <option value="물품 신고">물품 신고</option>
+                   <option value="게시글 신고" selected>게시글 신고</option>
+               </select>
             </span>
         </div>
         <form name="admin_page_bbs_report" action="admin_page_bbs_report_delete_ok.jsp" onsubmit="return realDelete()">
             <table id="table">
-            	<thead>
-	                <tr>
-	                    <th><input type="checkbox" id="ck_all" onclick="allClick()"></th>
-	                    <th>번호</th>
-	                    <th>게시글 번호</th>
-	                    <th>게시글 제목</th>
-	                    <th>신고자</th>
-	                    <th>신고 날짜</th>
-	                    <th>신고 상세 내용</th>
-	                </tr>
+               <thead>
+                   <tr>
+                       <th><input type="checkbox" id="ck_all" onclick="allClick()"></th>
+                       <th>번호</th>
+                       <th>게시글 번호</th>
+                       <th>게시글 제목</th>
+                       <th>신고자</th>
+                       <th>신고 날짜</th>
+                       <th>신고 상세 내용</th>
+                   </tr>
                 </thead>
-                <tfoot>
-                	<tr>
-                		<td colspan="6" align="center">
-                			<%
-							if(usergroup != 0){
-							%>
-								<a href="admin_page_bbs_report.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %>">&lt;&lt;</a>
-							<%	
-							}
-							%>
-							
-							<%
-								for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
-							%>
-								&nbsp;&nbsp;<a href="admin_page_bbs_report.jsp?cp=<%=i %>"><%=i %></a>&nbsp;&nbsp;
-							<%		
-									if(i == totalpage) break;
-								}
-							%>
-							
-							<%
-								if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
-							%>
-									<a href="admin_page_bbs_report.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %>">&gt;&gt;</a>
-							<% 		
-								}
-							%>
-                		</td>
-                	</tr>
-                </tfoot>
                 <tbody>
-               		<%
-               		String selectVal = request.getParameter("selectVal");
-               		String searchVal = request.getParameter("searchVal");
-               		
-	                List<BbsReportDTO> dtos = bbs_report_dao.bbsReportList(cp, listsize, selectVal, searchVal);
-	                if(dtos==null||dtos.size()==0){
-	                %>
-	                <tr>
-	                    <td id="ck_td"><input type="checkbox"></td>
-	                    <td colspan="5">등록된 물품이 없습니다.</td>
-	                </tr>
-	                <%	
-	                }else{
-	                	for(BbsReportDTO dto : dtos){
-	           		%>
-		                   	<tr>
-			                    <td><input type="checkbox" name="ck" value="<%=dto.getBbs_report_idx()%>"></td>
-			                    <td><%=dto.getBbs_report_idx()%></td>
-			                    <td><%=dto.getBbs_idx()%></td>
-			                    <td><a href="admin_page_bbs_detail.jsp?bbs_idx=<%=dto.getBbs_idx()%>" class="click"><%=dto.getBbs_subject()%></a></td>
-			                    <td><%=dto.getUser_name()%></td>
-			                    <td><%=dto.getBbs_report_reportdate()%></td>
-			                    <td>
-			                    <a href="admin_page_bbs_report_detail.jsp?subject=<%=dto.getBbs_subject() %>&name=<%=dto.getUser_name()%>&date=<%=dto.getBbs_report_reportdate()%>&content=<%=dto.getBbs_report_content()%>&cp=<%=cp %>" class="click">click</a>
-			                    </td>
-	               			</tr>
-	                <%			
-	                	}
-	                }
-	                %>
+                     <%
+                   List<BbsReportDTO> dtos = bbs_report_dao.bbsReportList(cp, listsize, selectVal, searchVal);
+                   if(dtos==null||dtos.size()==0){
+
+                   %>
+                   <tr>
+                       <td id="ck_td"><input type="checkbox"></td>
+                       <td colspan="6">등록된 물품이 없습니다.</td>
+                   </tr>
+                   <%   
+                   }else{
+                       for(BbsReportDTO dto : dtos){
+                    %>
+                            <tr>
+                             <td><input type="checkbox" name="ck" value="<%=dto.getBbs_report_idx()%>"></td>
+                             <td><%=dto.getBbs_report_idx()%></td>
+                             <td><%=dto.getBbs_idx()%></td>
+                             <td><a href="admin_page_bbs_detail.jsp?bbs_idx=<%=dto.getBbs_idx()%>&bbss=게시글신고" class="click"><%=dto.getBbs_subject()%></a></td>
+                             <td><%=dto.getUser_name()%></td>
+                             <td><%=dto.getBbs_report_reportdate()%></td>
+                             <td>
+                             <a href="admin_page_bbs_report_detail.jsp?subject=<%=dto.getBbs_subject() %>&name=<%=dto.getUser_name()%>&date=<%=dto.getBbs_report_reportdate()%>&content=<%=dto.getBbs_report_content()%>&cp=<%=cp %>" class="click">click</a>
+                             </td>
+                           </tr>
+                   <%         
+                      }
+                   }
+                   %>
                 </tbody>
+                <tfoot>
+                   <tr>
+                      <td colspan="7" align="center">
+                     <%
+	                    String selectQueryParam = "";
+	                  	String searchQueryParam = "";
+	                   	if(selectVal != null) {
+	                   		selectQueryParam = "&selectVal=" + selectVal;
+	                   	}
+	                   	if(searchVal != null) {
+	                   		searchQueryParam = "&searchVal=" + searchVal;
+	                   	}
+                     if(usergroup != 0){
+                     %>
+                        <a href="admin_page_bbs_report.jsp?cp=<%=(usergroup - 1) * pagesize+pagesize %><%=selectQueryParam %><%=searchQueryParam %>">&lt;&lt;</a>
+                     <%   
+                     }
+                     for(int i = (usergroup * pagesize + 1);i <= (usergroup * pagesize + pagesize); i++){
+                     %>
+                        &nbsp;&nbsp;<a href="admin_page_bbs_report.jsp?cp=<%=i %><%=selectQueryParam %><%=searchQueryParam %>"><%=i %></a>&nbsp;&nbsp;
+                     <%      
+                           if(i == totalpage) break;
+                        }
+                     if(usergroup != (totalpage/pagesize-(totalpage % pagesize == 0 ? 1 : 0))){
+                     %>
+                           <a href="admin_page_bbs_report.jsp?cp=<%= (usergroup + 1) * pagesize + 1 %><%=selectQueryParam %><%=searchQueryParam %>">&gt;&gt;</a>
+                     <%       
+                        }
+                     %>
+                      </td>
+                   </tr>
+                </tfoot>
             </table>
             <span>
                 <input type="submit" value="삭제" class="b_css">

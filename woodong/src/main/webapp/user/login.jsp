@@ -20,11 +20,11 @@ a {
 .text {
 	width: 300px;
 	height: 50px;
-	margin-left: 30px;
 	margin-bottom: 10px;
 	border-radius: 10px;
 	border: 2px solid black;
 }
+
 .button{
 	margin-top:10px;
 	width: 300px;
@@ -73,15 +73,15 @@ if(cks!=null){
 		</legend>
 		<form action="login_ok.jsp" name="login">
 		
-			<div>
+			<div style="text-align: center; padding-right: 35px">
 				<ul>
 					<li><input type="text" name="user_id" placeholder="아이디" class="text" value="<%=save_id%>"></li>	
 					<li><input type="password" name="user_pwd" placeholder="패스워드" class="text"></li>
-					<li style="margin-left:30px;"><input type="checkbox" name="save_id" value="on" <%=save_id.equals("")?"":"checked" %>>ID 기억하기
+					<li><input type="checkbox" name="save_id" value="on" <%=save_id.equals("")?"":"checked" %>>ID 기억하기
 						<label><a href="javascript:openFindId()">아이디 찾기</a>|
 							   <a href="javascript:openFindPassword()">비밀번호 찾기</a>
 						</label></li>
-					<li style="text-align: center;"><input type="submit" value="로그인" class="button" id="button"></li>
+					<li style="text-align: center; padding-left: 40px;"><input type="submit" value="로그인" class="button" id="button"></li>
 					
 				</ul>
 			</div>

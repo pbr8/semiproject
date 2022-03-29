@@ -29,6 +29,17 @@ label{
 #btset{
 	text-align: center;
 }
+#leftside{
+	padding-left:330px;
+}
+#fs{
+	width:680px;
+}
+#fo{
+
+padding-top:250px;
+
+}
 </style>
 </head>
 <%@include file="/header.jsp" %>
@@ -37,8 +48,8 @@ label{
 <section>
 	<article id="leftside">
 	<form name="bbsWrite" action="locationbbswrite_ok.jsp">
-	<h5 style="color:#ff0000">서울 게시판</h5>
-		<fieldset>
+	<h5 style="color:#ff0000">자유게시판</h5>
+		<fieldset id="fs">
 			<label>제목 : </label>
 			<input type="text" name="bbs_subject" placeholder="제목을 입력해주세요." style="width: 698px;"><hr>
 			<textarea name="bbs_content" placeholder="내용을 입력해주세요."></textarea>
@@ -52,4 +63,7 @@ label{
 	</article>
 </section>
 </body>
+<article id="fo">
+<%@include file="/footer.jsp"%>
+</article>
 </html>

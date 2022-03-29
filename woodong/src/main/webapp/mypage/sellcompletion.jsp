@@ -47,10 +47,6 @@ body {
 	padding-top: 200px;
 }
 
-label {
-	padding-left: 200px;
-}
-
 #c_section
 	text-align: center;
 }
@@ -165,10 +161,14 @@ a {
 			</nav>
 			<nav id="nav_bg">
 				<br>
+				
+				<div style="width: 1000px; margin: 0px auto;">
 				<hr>
 				<label><input type="checkbox" onclick='selectAll(this)' />
 					전체선택</label> <input type="submit" value="선택삭제" id="bt_c">
-				<hr>
+					<hr>
+				</div>
+				
 			</nav>
 		</article>
 		<section id="c_section">
@@ -198,7 +198,7 @@ a {
 							<input type="checkbox" name="sel"
 								value="<%=dto.getProduct_idx()%>">
 						</div></td>
-					<td id="dto"><img style="width: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></td>
+					<td id="dto"><a href="/woodong/product/productInfo.jsp?pidx=<%=dto.getProduct_idx()%>"><img style="width: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></a></td>
 					<td id="dto"><%=dto.getUser_addr()%></td>
 					<td id="dto"><%=dto.getProduct_price()%></td>
 				</tr>

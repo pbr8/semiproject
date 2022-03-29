@@ -7,18 +7,12 @@ request.setCharacterEncoding("utf-8");
 
 String userid=(String)session.getAttribute("sid");
 if(userid==null||userid.equals("")){
-	
 	%>
-	
 	<script>
-	
 	alert('로그인 후 이용 가능합니다.');
 	location.href='/woodong';
-	
 	</script>
-	
 	<%
-	
 }
 
 
@@ -36,6 +30,15 @@ int uidx=udao.findUserIdxByUserId(userid);
 function imgUploadPop(){
 	window.open('productImgUpload.jsp','imgUpload','width=400px,height=360px');
 }
+function mustHaveCategory(){
+	var category=document.productUploadDateForm.product_category.value;
+	if(category=='카테고리'){
+		alert('카테고리를 선택해주세요.');
+		return false;
+	}else{
+		return true;
+	}
+}
 </script>
 </head>
 <body>
@@ -46,12 +49,12 @@ function imgUploadPop(){
 		<h2>판매 등록</h2>
 	</article>
 	<article id="productUpload_list">
-		<form name="productUploadDateForm" action="productUpload_ok.jsp">
+		<form name="productUploadDateForm" action="productUpload_ok.jsp" onsubmit="return mustHaveCategory();">
 			<input type="hidden" name="user_idx" value="<%=uidx%>">
 			<input type="hidden" name="product_img">
 			<ul>
 				<li>
-					<select name="product_category" onload="findSelected()">
+					<select name="product_category">
 						<option value="카테고리" selected disabled="disabled">카테고리</option>
 						<option value="의류">의류</option>
 						<option value="디지털 / 가전">디지털 / 가전</option>

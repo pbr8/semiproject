@@ -15,19 +15,6 @@ String userid=(String)session.getAttribute("sid");
 
 UserDTO udto=udao.findUserInfoByUserId(userid);
 
-
-String s_cp=request.getParameter("cp");
-if(s_cp==null||s_cp.equals("")){
-	s_cp="1";
-}
-int cp=Integer.parseInt(s_cp);
-
-String s_cp2=request.getParameter("cp2");
-if(s_cp2==null||s_cp2.equals("")){
-	s_cp2="1";
-}
-int cp2=Integer.parseInt(s_cp2);
-
 String s_pidx=request.getParameter("pidx");
 if(s_pidx==null||s_pidx.equals("")){
 	s_pidx="0";
@@ -200,7 +187,9 @@ function soldOut(){
 		<article>
 			<div id="product_seller_other_div">
 				<div class="productInfo_other_list_title">
-					<a href="productList.jsp?nickname=<%=pdto.getUser_idx()%>" style="text-decoration: none; color: black;"><%=pdto.getUser_nickname() %> 님의 다른 상품</a>
+					<a href="productList.jsp?uidx=<%=pdto.getUser_idx()%>" style="text-decoration: none; color: black;">
+						<%=pdto.getUser_nickname() %> 님의 다른 상품
+					</a>
 				</div>
 				<%
 				for(int i=0; i<otherArr.size(); i++){
@@ -208,6 +197,7 @@ function soldOut(){
 						if(sj.length()>10){
 							sj=sj.substring(0,10)+"...";
 						}
+						if(i==5) break;
 						%>
 					<a href="productInfo.jsp?pidx=<%=otherArr.get(i).getProduct_idx()%>" style="text-decoration: none; color: black;">
 					<div class="productInfo_other_img">
@@ -223,9 +213,7 @@ function soldOut(){
 		</article>
 		<%
 		}
-		%>
 		
-		<%
 		ArrayList<ProductDTO> relatedArr=pdao.lpList(pdto.getProduct_category(),pdto.getProduct_idx());
 		if(relatedArr!=null&&relatedArr.size()>0){
 		%>
@@ -240,6 +228,7 @@ function soldOut(){
 					if(sj2.length()>10){
 						sj2=sj2.substring(0,10)+"...";
 					}
+					if(i==5) break;
 					%>
 					<a href="productInfo.jsp?pidx=<%=relatedArr.get(i).getProduct_idx()%>" style="text-decoration: none; color: black;">
 					<div class="productInfo_other_img">

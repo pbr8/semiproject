@@ -46,10 +46,6 @@ body {
 	padding-top: 200px;
 }
 
-label {
-	padding-left: 200px;
-}
-
 #c_section{
 	text-align: center;
 }
@@ -163,11 +159,13 @@ a {
 			<nav id="nav_bg">
 				<br>
 				<hr>
-				<!-- 전체 선택 체크박스 -->
-				<label><input type="checkbox" onclick='selectAll(this)' />
-					전체선택</label>
-				<!-- 선택 삭제 버튼(SUBMIT) -->
-				<input type="submit" value="선택삭제" id="bt_c">
+				<div style="width: 1000px; margin: 0px auto;">
+					<!-- 전체 선택 체크박스 -->
+					<label><input type="checkbox" onclick='selectAll(this)' />
+						전체선택</label>
+					<!-- 선택 삭제 버튼(SUBMIT) -->
+					<input type="submit" value="선택삭제" id="bt_c">
+				</div>
 				<hr>
 			</nav>
 		</article>
@@ -199,7 +197,7 @@ a {
 							<input type="checkbox" name="sel"
 								value="<%=dto.getProduct_idx()%>">
 						</div></td>
-					<td id="dto"><img style="width: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></td>
+					<td id="dto"><a href="/woodong/product/productInfo.jsp?pidx=<%=dto.getProduct_idx()%>"><img style="width: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></a></td>
 					<td id="dto"><%=dto.getUser_addr()%></td>
 					<td id="dto"><%=dto.getProduct_price()%></td>
 				</tr>

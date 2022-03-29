@@ -20,8 +20,8 @@ location.href = "selllist.jsp"
 sell_com_deleteDAO.sell_list_delete(sel);
 %>
 <script>
-alert('찜 목록의 물품이 삭제되었습니다')
-location.href = "selllist.jsp";
+alert('판매중 목록의 물품이 삭제되었습니다')
+location.href = "sellcompletion.jsp";
 </script>
 <%}%>
 

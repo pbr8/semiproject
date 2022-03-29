@@ -6,7 +6,10 @@
 <%
 String s_bbs_idx=request.getParameter("bbs_idx");
 int bbs_idx=Integer.parseInt(s_bbs_idx);
-int result=hdao.addHeart(bbs_idx, 2);
+String s_user_idx=request.getParameter("user_idx");
+int user_idx=Integer.parseInt(s_user_idx);
+int result=hdao.addHeart(bbs_idx, user_idx);
+
 String msg=result>0?"추천 완료!":"이미 추천한 글입니다!";
 %>
 <script>
