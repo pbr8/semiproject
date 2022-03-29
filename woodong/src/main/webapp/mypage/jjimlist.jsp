@@ -54,8 +54,8 @@ body {
    margin: 0px auto;
 }
 #bt_div{
-	width: 1000px;
-	margin : 0px auto;
+   width: 1000px;
+   margin : 0px auto;
 }
 
 hr {
@@ -186,6 +186,7 @@ a {
       <section id="c_section">
          <table class="list_table">
             <tr>
+            <th>&nbsp</th>
                <th>상 품 정 보</th>
                <th>판 매 자</th>
                <th>지 역</th>
@@ -219,7 +220,7 @@ a {
                <td><%=dto.getProduct_price()%></td>
             </tr>
             <%
-            }
+            	}
             }
             %>
          </table>
