@@ -121,7 +121,6 @@ label {
 		}
 	}
 
-
 	function openNicknameCheck() {
 		window.open('/woodong/user/user_nicknameCheck.jsp','nickname','width=500px,height=300px');
 	}
@@ -134,16 +133,28 @@ label {
 <article>				
 <fieldset>
 <h2>내 정보 수정</h2>
-<form action="myinfoChange_ok.jsp" name="userjoin" method="post">
+<form action="myinfoChange_ok.jsp" name="userjoin" method="post" onsubmit="return isAddrChanged();">
 	<ul>
 		<li>
 			<% 
 			ArrayList<UserDTO> dto=udao.getUserInfo(sid);
 			for(int i=0;i<dto.size();i++){
 				UserDTO udto=dto.get(i);
-				
-			%>
-			
+				%>
+				<script>
+				function isAddrChanged(){
+					var chAddr1 = document.userjoin.user_addr.value;
+					var chAddr2 = document.userjoin.user_addr2.value;
+					var changedAddr = chAddr1 + ' ' + chAddr2;
+					if(changedAddr!='<%=udto.getUser_addr()%>'){
+						var result = window.confirm('주소 변경시 판매글의 주소도 변경됩니다.\n정말로 변경 하시겠습니까?\n\n수정 전 주소 : <%=udto.getUser_addr()%>\n수정 후 주소 : '+changedAddr);
+						if(result==true) return true;
+						else return false;
+					}else{
+						return true;
+					}
+				}
+				</script>
 			<label>이름 :</label>
 			<input type="text" name="user_name" value="<%=udto.getUser_name()%>" class="text" id="read" readonly>
 		</li>

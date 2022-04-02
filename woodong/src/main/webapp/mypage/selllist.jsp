@@ -49,7 +49,7 @@ body {
 #c_section{
 	text-align: center;
 }
-hr {
+body nav hr {
 	width: 1000px;
 }
 
@@ -197,7 +197,7 @@ a {
 							<input type="checkbox" name="sel"
 								value="<%=dto.getProduct_idx()%>">
 						</div></td>
-					<td id="dto"><a href="/woodong/product/productInfo.jsp?pidx=<%=dto.getProduct_idx()%>"><img style="width: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></a></td>
+					<td id="dto"><a href="/woodong/product/productInfo.jsp?pidx=<%=dto.getProduct_idx()%>"><img style="width: 100px; height: 100px;" src="/woodong/product/img/productImg/<%=dto.getProduct_img()%>" alt="상품이미지"></a></td>
 					<td id="dto"><%=dto.getUser_addr()%></td>
 					<td id="dto"><%=dto.getProduct_price()%></td>
 				</tr>

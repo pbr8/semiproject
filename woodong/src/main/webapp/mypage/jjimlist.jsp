@@ -58,7 +58,7 @@ body {
    margin : 0px auto;
 }
 
-hr {
+body nav hr {
    width: 1000px;
 }
 

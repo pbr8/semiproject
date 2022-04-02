@@ -12,8 +12,12 @@ request.setCharacterEncoding("utf-8");
 
 
 String userid=(String)session.getAttribute("sid");
-
 UserDTO udto=udao.findUserInfoByUserId(userid);
+
+String myaddr="전체";
+if(udto.getUser_addr()!=null){
+	myaddr=udto.getUser_addr().substring(0,2);
+}
 
 String s_pidx=request.getParameter("pidx");
 if(s_pidx==null||s_pidx.equals("")){
@@ -61,7 +65,10 @@ function addZzim(){
 		window.alert('로그인 후 이용 가능합니다.');
 		return;
 	}
-	window.location.href='productInfoZzim_ok.jsp?pidx=<%=pdto.getProduct_idx()%>';
+	window.location.href='productInfoAddZzim_ok.jsp?pidx=<%=pdto.getProduct_idx()%>';
+}
+function cancleZzim(){
+	location.href='productInfoCancleZzim_ok.jsp?pidx=<%=pdto.getProduct_idx()%>';
 }
 function addReport(){
 	var uid='<%=userid%>';
@@ -86,7 +93,7 @@ function goUpdate(){
 	location.href='productUpdate.jsp?pidx=<%=pdto.getProduct_idx()%>';
 }
 function goList(){
-	location.href='productList.jsp?pCategory=<%=pdto.getProduct_category()%>';
+	location.href='productList.jsp';
 }
 function soldOut(){
 	var result=window.confirm('판매 완료 처리 하시겠습니까?');
@@ -138,7 +145,7 @@ function soldOut(){
 					<td class="sinfo_subject">판매자</td><td><%=pdto.getUser_nickname() %></td>
 				</tr>
 				<tr>
-					<td class="sinfo_subject">연락처</td><td><%=pdto.getProduct_tel() %></td>
+					<td class="sinfo_subject">연락처</td><td><%=userid==null?"***-****-****":pdto.getProduct_tel() %></td>
 				</tr>
 				<tr>
 					<td class="sinfo_subject">거래지역</td><td><%=pdto.getUser_addr() %></td>
@@ -167,7 +174,18 @@ function soldOut(){
 				}else{
 					%>
 					<div id="productInfo_button_div2">
+					<%
+					boolean zzimResult=phdao.didZzim(pidx, udto.getUser_idx());
+					if(zzimResult){
+						%>
+						<input type="button" value="찜 취소" onclick="cancleZzim();" class="productInfo_button2">
+						<%
+					}else{
+						%>						
 						<input type="button" value="찜 하기" onclick="addZzim();" class="productInfo_button2">
+						<%
+					}
+					%>
 						<input type="button" value="신고하기" onclick="addReport();" class="productInfo_button2">
 					</div>
 					<%
@@ -181,7 +199,7 @@ function soldOut(){
 		</article>
 		<hr class="productInfo_hr_clear">
 		<%
-		ArrayList<ProductDTO> otherArr=pdao.ssopList(pdto.getUser_idx(),pdto.getProduct_idx());
+		ArrayList<ProductDTO> otherArr=pdao.ssopList(pdto.getUser_idx(),pdto.getProduct_idx(),myaddr);
 		if(otherArr!=null&&otherArr.size()>0) {
 		%>
 		<article>
@@ -214,7 +232,7 @@ function soldOut(){
 		<%
 		}
 		
-		ArrayList<ProductDTO> relatedArr=pdao.lpList(pdto.getProduct_category(),pdto.getProduct_idx());
+		ArrayList<ProductDTO> relatedArr=pdao.lpList(pdto.getProduct_category(),pdto.getProduct_idx(),myaddr);
 		if(relatedArr!=null&&relatedArr.size()>0){
 		%>
 		<article>

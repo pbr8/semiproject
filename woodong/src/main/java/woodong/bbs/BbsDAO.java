@@ -232,8 +232,7 @@ public class BbsDAO {
 			
 			rs.next();
 			int count = rs.getInt(1);
-			return count == 0 ? 1: count;
-			
+			return count;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -315,7 +314,7 @@ public class BbsDAO {
 				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,?)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
-				ps.setString(2, dto.getBbs_content());
+				ps.setString(2, dto.getBbs_content()==null?" ":dto.getBbs_content());
 				ps.setInt(3, maxref+1);
 				ps.setInt(4, user_idx);
 				int count=ps.executeUpdate();
@@ -398,7 +397,7 @@ public class BbsDAO {
 				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,?,?,0,?)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
-				ps.setString(2, dto.getBbs_content());
+				ps.setString(2, dto.getBbs_content()==null?" ":dto.getBbs_content());
 				ps.setInt(3, dto.getBbs_ref());
 				ps.setInt(4, dto.getBbs_lev()+1);
 				ps.setInt(5, dto.getBbs_step()+1);
@@ -550,7 +549,7 @@ public class BbsDAO {
 				String sql="update sp_bbs set bbs_subject=?, bbs_content=? where bbs_idx=?";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
-				ps.setString(2, dto.getBbs_content());
+				ps.setString(2, dto.getBbs_content()==null?" ":dto.getBbs_content());
 				ps.setInt(3, dto.getBbs_idx());
 				int count=ps.executeUpdate();
 				return count;

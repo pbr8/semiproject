@@ -2,20 +2,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 
+<%@page import="woodong.user.*" %>
 <%@page import="woodong.product.*"%>
 <%@page import="java.util.*"%>
+<%@page import="java.io.*" %>
 
-<jsp:useBean id="pdao" class="woodong.product.ProductDAO"></jsp:useBean>
-<jsp:useBean id="phdao" class="woodong.product.heart.ProductHeartDAO"></jsp:useBean>
+<jsp:useBean id="pdao" class="woodong.product.ProductDAO" scope="session"></jsp:useBean>
+<jsp:useBean id="phdao" class="woodong.product.heart.ProductHeartDAO" scope="session"></jsp:useBean>
+<jsp:useBean id="udao" class="woodong.user.UserDAO" scope="session"></jsp:useBean>
+<%
+pdao.deleteNotSavedImg();
 
+String userid=(String)session.getAttribute("sid");
+UserDTO udto=udao.findUserInfoByUserId(userid);
+String myaddr="전체";
+if(udto.getUser_addr()!=null){
+	myaddr=udto.getUser_addr().substring(0, 2);
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-
 <link rel="stylesheet" type="text/css" href="/woodong/css/index.css">
-
 </head>
 <body>
 	<%@include file="/header.jsp"%>
@@ -32,12 +42,12 @@
 
 	<div class="main_bc">
 		<h1>
-			중고거래 인기매물
+			<%=udto.getUser_addr()==null?"중고거래 인기매물":"우리동네 인기매물" %>
 		</h1>
 
 		<div id="popular_list">
 			<%
-			ArrayList<ProductDTO> arr = pdao.mainHotList();
+			ArrayList<ProductDTO> arr = pdao.mainHotList(myaddr);
 			if (arr == null || arr.size() == 0) {
 			%>
 			<h3 style="text-align: center;">등록된 상품이 없습니다.</h3>
@@ -62,6 +72,9 @@
 					<div class="product_card_seller">
 						판매자 :
 						<%=arr.get(i).getUser_nickname()%>
+					<div class="product_card_seller" style="color: gray; margin-top: 3px;">
+	          			<%=arr.get(i).getUser_addr() %>
+	          		</div>
 					</div> <span class="zzim">찜 <%=phdao.zzimCount(arr.get(i).getProduct_idx())%>
 						| <%
  int ptime = pdao.passedTime(arr.get(i).getProduct_idx());

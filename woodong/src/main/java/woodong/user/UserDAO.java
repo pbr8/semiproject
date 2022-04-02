@@ -307,18 +307,18 @@ public class UserDAO {
 			rs=ps.executeQuery();
 			int result=0;
 			while(rs.next()) {
-			String pwd=rs.getString("user_pwd");
-			System.out.println(pwd);
-			if(pwd.equals(newpwd)) {
-				result=1;
-			}else if(!(newpwd.equals(newpwd_check))) {
-				result=2;
-			}else if(newpwd.equals(newpwd_check)) {
-				String sql2="update sp_user set user_pwd='"+newpwd+"' where user_id='"+user_id+"'";
-				ps=conn.prepareStatement(sql2);
-				ps.executeUpdate();
-				result=3;
-			}}
+				String pwd=rs.getString("user_pwd");
+				if(pwd.equals(newpwd)) {
+					result=1;
+				}else if(!(newpwd.equals(newpwd_check))) {
+					result=2;
+				}else if(newpwd.equals(newpwd_check)) {
+					String sql2="update sp_user set user_pwd='"+newpwd+"' where user_id='"+user_id+"'";
+					ps=conn.prepareStatement(sql2);
+					ps.executeUpdate();
+					result=3;
+				}
+			}
 			return result;
 		} catch (Exception e) {
 			e.printStackTrace();

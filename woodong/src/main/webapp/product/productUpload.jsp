@@ -32,12 +32,20 @@ function imgUploadPop(){
 }
 function mustHaveCategory(){
 	var category=document.productUploadDateForm.product_category.value;
+	
 	if(category=='카테고리'){
 		alert('카테고리를 선택해주세요.');
 		return false;
 	}else{
 		return true;
 	}
+}
+
+function numberCk(){
+   var number=event.keyCode;
+   if((number<48)||(number>57)){
+      event.returnValue=false;
+   }
 }
 </script>
 </head>
@@ -67,10 +75,10 @@ function mustHaveCategory(){
 					</select>
 				</li>
 				<li>
-					<input type="text" name="product_tel" class="productUpload_tfPrice" placeholder="연락처">
+					<input type="text" name="product_tel" class="productUpload_tfPrice" placeholder="연락처" required>
 				</li>
 				<li>
-					<input type="text" name="product_price" class="productUpload_tfPrice" placeholder="가격" required><span>&nbsp;원</span>
+					<input type="text" name="product_price" class="productUpload_tfPrice" placeholder="가격(숫자만)" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" required><span>&nbsp;원</span>
 				</li>
 				<li>
 					<input type="text" name="product_subject" id="productUpload_tfSubject" placeholder="제목" required>

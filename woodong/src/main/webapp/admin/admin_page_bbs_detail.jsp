@@ -6,7 +6,6 @@
 
 <%   
    String bbss = request.getParameter("bbss");
-   System.out.print(bbss);
    
    String bbs_idx = request.getParameter("bbs_idx");
    String scp = request.getParameter("scp");
@@ -69,14 +68,14 @@ fieldset {
 <section>
    <article>
       <div id="center">
-         <h2 class="title"><%=dto.getUser_addr() %> 게시판</h2>
+         <h2 class="title">자유 게시판</h2>
          <fieldset>
             <h3 class="title"><%=dto.getBbs_subject() %></h3>
             <label><%=dto.getUser_name() %></label><br>
             <label><%=dto.getBbs_writedate() %></label>
             <label id="rightset">조회수 <%=dto.getBbs_readnum() %> | 추천 <%=bbs_heart %></label>
             <hr>
-            <%=dto.getBbs_content() %>
+            <%=dto.getBbs_content().replaceAll("\n", "<br>") %>
             <hr>
          </fieldset>
          <div id="b_div">

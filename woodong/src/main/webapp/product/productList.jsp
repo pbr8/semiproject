@@ -16,10 +16,21 @@ if(s_uidx==null||s_uidx.equals("")){
 int uidx=Integer.parseInt(s_uidx);
 
 String pCategory=request.getParameter("pCategory");
+if(pCategory==null||pCategory.equals("")){
+	pCategory="전체";
+}
 
 String keyword=request.getParameter("search_text");
 
 UserDTO udto=udao.findUserInfoByUserIdx(uidx);
+
+String userid=(String)session.getAttribute("sid");
+
+UserDTO myUdto=udao.findUserInfoByUserId(userid);
+String myaddr="전체";
+if(myUdto.getUser_addr()!=null){
+	myaddr=myUdto.getUser_addr().substring(0, 2);
+}
 
 int totalCnt=0;
 int listSize=12;
@@ -33,15 +44,15 @@ int cp=Integer.parseInt(s_cp);
 
 
 ArrayList<ProductDTO> arr=null;
-if(keyword!=null&&!keyword.equals("null")){
-	arr=pdao.main_Product_Search(keyword, cp, listSize);
-	totalCnt=pdao.getTotalCntS(keyword);
+if(keyword!=null){
+	arr=pdao.main_Product_Search(keyword, cp, listSize, myaddr);
+	totalCnt=pdao.getTotalCntS(keyword, myaddr);
 }else if(uidx>0){
-	arr=pdao.samesellerListPage(uidx, cp, listSize);
-	totalCnt=pdao.getTotalCntU(uidx);
+	arr=pdao.samesellerListPage(uidx, cp, listSize, myaddr);
+	totalCnt=pdao.getTotalCntU(uidx, myaddr);
 }else{
-	arr=pdao.productList(pCategory,cp,listSize);
-	totalCnt=pdao.getTotalCntC(pCategory);
+	arr=pdao.productList(pCategory,cp,listSize,myaddr);
+	totalCnt=pdao.getTotalCntC(pCategory, myaddr);
 }
 
 int totalPage=(totalCnt%listSize)==0?(totalCnt/listSize):(totalCnt/listSize)+1;
@@ -59,8 +70,13 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
 <div id="userAddr">&nbsp;</div>
 <section id="bodysection">
   <article>
+    <div style="font-size: 18px; font-weight: bold;">
+      <span style="color: red;"><%=myaddr %></span> 동네 &gt;
+    </div>
+  </article>
+  <article>
   	<%
-     if(keyword!=null&&!keyword.equals("null")){
+     if(keyword!=null){
         %>
         <h2>"<%=keyword %>" 검색 결과 목록</h2>
         <%
@@ -87,6 +103,7 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
     }else{
 	    for(int i=0; i<arr.size(); i++){
 		%>
+		
 	      <div class="product_card">
 	        <a href="productInfo.jsp?pidx=<%=arr.get(i).getProduct_idx()%>">
 	        	<div class="product_card_imgDiv">
@@ -111,6 +128,9 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
 	          	</div>
 	          	<div class="product_card_seller">
 	            	판매자 : <%=arr.get(i).getUser_nickname() %>
+	          	</div>
+	          	<div class="product_card_seller" style="color: gray; margin-top: 3px;">
+	          		<%=arr.get(i).getUser_addr() %>
 	          	</div>
 	          	<span class="zzim">찜 <%=phdao.zzimCount(arr.get(i).getProduct_idx()) %> | 
 				<%
@@ -141,25 +161,36 @@ int userGroup=(cp%pageSize)==0?(cp/pageSize)-1:(cp/pageSize);
     	<tr>
     	<!-- paging -->
     	<%
+    	String pagingParam = "";
+    	if(keyword!=null){
+    		pagingParam="&search_text="+keyword;
+    	}
+    	else if(uidx>0){
+    		pagingParam="&uidx="+uidx;
+    	}
+    	else {
+    		pagingParam="&pCategory="+pCategory;
+    	}
+    	
     	if(userGroup!=0){ 
     		%>
-    		<td class="pageList"><a href="productList.jsp?cp=<%=(userGroup-1)*pageSize+pageSize %>">&lt;&lt;</a></td>
+    		<td class="pageList"><a href="productList.jsp?cp=<%=(userGroup-1)*pageSize+pageSize %><%=pagingParam%>">&lt;&lt;</a></td>
 			<%
 		} 
 		for(int i=(userGroup*pageSize)+1; i<=(userGroup+1)*pageSize; i++){ 
 			if(i==cp){
 				%>
-	    		<td class="cp"><a href="productList.jsp?cp=<%=i %>&uidx=<%=uidx%>&pCategory=<%=pCategory%>&search_text=<%=keyword%>"><%=i %></a></td>
+	    		<td class="cp"><a href="productList.jsp?cp=<%=i %><%=pagingParam%>"><%=i %></a></td>
 	    		<%
 	    	}else{
 	    		%>
-		    	<td class="pageList"><a href="productList.jsp?cp=<%=i %>&uidx=<%=uidx%>&pCategory=<%=pCategory%>&search_text=<%=keyword%>"><%=i %></a></td>
+		    	<td class="pageList"><a href="productList.jsp?cp=<%=i %><%=pagingParam%>"><%=i %></a></td>
 		    	<%
 		    }
 			if(i==totalPage)break;
 		}if(userGroup!=(totalPage/pageSize)-(totalPage%pageSize==0?1:0)){
 			%>
-			<td class="pageList"><a href="productList.jsp?cp=<%=(userGroup+1)*pageSize+1 %>">&gt;&gt;</a></td>
+			<td class="pageList"><a href="productList.jsp?cp=<%=(userGroup+1)*pageSize+1 %><%=pagingParam%>">&gt;&gt;</a></td>
 			<%
 		}
 		%>

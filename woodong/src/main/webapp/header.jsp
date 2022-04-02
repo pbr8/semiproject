@@ -1,16 +1,46 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
-<link rel="stylesheet" type="text/css" href="/woodong/css/header.css">
-<script type="text/javascript">
-	function openlogin() {
-		window.open('/woodong/user/login.jsp','login','width=500px,height=320px')
-	}	
-</script>
 <%
 String sname=(String)session.getAttribute("sname");
 String sid=(String)session.getAttribute("sid");
 %>
+<link rel="stylesheet" type="text/css" href="/woodong/css/header.css">
+<script type="text/javascript">
+function openlogin() {
+	window.open('/woodong/user/login.jsp','login','width=500px,height=320px')
+}
+function loginCheck(){
+	if('<%=sname%>'=='null') return false;
+	else return true;
+}
+function goProductUpload(){
+	var result=loginCheck();
+	if(result==true){
+		location.href='/woodong/product/productUpload.jsp';
+	}
+	else{
+		alert('로그인 후 이용 가능합니다.');
+	}
+}
+function goBbsList(){
+	var result=loginCheck();
+	if(result==true){
+		location.href='/woodong/locationbbs/bbsList.jsp';
+	}
+	else{
+		alert('로그인 후 이용 가능합니다.');
+	}
+}
+function goMyPage(){
+	var result=loginCheck();
+	if(result==true){
+		location.href='/woodong/mypage/mypage.jsp';
+	}
+	else{
+		alert('로그인 후 이용 가능합니다.');
+	}
+}
+</script>
 <header>
 	<section>
 			<article>
@@ -68,16 +98,16 @@ String sid=(String)session.getAttribute("sid");
 					<td>
 						<form name="search_form" action="/woodong/product/productList.jsp">
 							<input type="text" placeholder="상품명을 검색해보세요!"
-								class="search_text_bar" name="search_text">
+								class="search_text_bar" name="search_text" required>
 							<button type="submit"
 								style="background-color: white; border: 0px;">
 								<img src="/woodong/img/Search.jpg" style="width: 30px;">
 							</button>
 						</form>
 					</td>
-					<td id="s_hover"><a href="/woodong/product/productUpload.jsp"><span>판매하기</span></a></td>
-					<td id="s_hover"><a href="/woodong/locationbbs/bbsList.jsp"><span>자유게시판</span></a></td>
-					<td id="s_hover"><a href="/woodong/mypage/mypage.jsp"><span>마이페이지</span></a></td>
+					<td id="s_hover"><a href="javascript: goProductUpload();"><span>판매하기</span></a></td>
+					<td id="s_hover"><a href="javascript: goBbsList();"><span>자유게시판</span></a></td>
+					<td id="s_hover"><a href="javascript: goMyPage();"><span>마이페이지</span></a></td>
 				</tr>
 			</table>
 		</article>

@@ -10,12 +10,9 @@
 
 <%
 int result=pdao.productUpload(pdto);
-System.out.println(result);
 String userid=(String)session.getAttribute("sid");
 int uidx=udao.findUserIdxByUserId(userid);
-System.out.println(result);
 int pidx=pdao.mostRecentProductByUidx(uidx);
-System.out.println(result);
 
 if(result>0){
 	%>

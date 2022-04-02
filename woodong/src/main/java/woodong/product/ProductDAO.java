@@ -152,34 +152,6 @@ public class ProductDAO {
 		}
 	}
 	
-	/**물품 삭제 메서드*/
-	public int product_delete(String[] ck_idx) {
-		try {
-			conn = woodong.db.WoodongDB.getConn();
-			
-			int count = 0;
-			for(String idx : ck_idx) {
-				String sql = "delete from sp_product where product_idx = ?";
-				ps = conn.prepareStatement(sql);
-				ps.setString(1, idx);
-				count += ps.executeUpdate();
-			}
-			return count;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-			return-1;
-		}finally {
-			try {
-				if(ps != null) ps.close();
-				if(conn != null) conn.close();
-			} catch (Exception e2) {
-				e2.printStackTrace();
-			}
-		}
-	}
-	
-	
 	/**물품 상세 메서드*/
 	public List<ProductDTO> product_report_detail(String product_idx) {
 		try {
@@ -245,8 +217,7 @@ public class ProductDAO {
 			
 			rs.next();
 			int count = rs.getInt(1);
-			return count == 0 ? 1: count;
-			
+			return count;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -301,7 +272,7 @@ public class ProductDAO {
 	            ps.setString(2, pdto.getProduct_tel());
 	            ps.setString(3, pdto.getProduct_category());
 	            ps.setInt(4, pdto.getProduct_price());
-	            ps.setString(5, pdto.getProduct_content());
+	            ps.setString(5, pdto.getProduct_content()==null?" ":pdto.getProduct_content());
 	            ps.setInt(6, pdto.getUser_idx());
 	         }else {
 	            String sql="insert into sp_product values(sp_product_idx_seq.nextval,?,?,?,?,?,0,sysdate,1,?,?)";
@@ -310,7 +281,7 @@ public class ProductDAO {
 	            ps.setString(2, pdto.getProduct_tel());
 	            ps.setString(3, pdto.getProduct_category());
 	            ps.setInt(4, pdto.getProduct_price());
-	            ps.setString(5, pdto.getProduct_content());
+	            ps.setString(5, pdto.getProduct_content()==null?" ":pdto.getProduct_content());
 	            ps.setInt(6, pdto.getUser_idx());
 	            ps.setString(7, pdto.getProduct_img());
 	         }
@@ -331,7 +302,7 @@ public class ProductDAO {
 	   }
 	
 	/**카테고리 리스트*/
-	public ArrayList<ProductDTO> productList(String pCategory, int cp, int listSize){
+	public ArrayList<ProductDTO> productList(String pCategory, int cp, int listSize, String addr){
 		try {
 			int start=(cp-1)*listSize+1;
 			int end=cp*listSize;
@@ -339,28 +310,57 @@ public class ProductDAO {
 			conn=woodong.db.WoodongDB.getConn();
 			String sql="";
 			if(pCategory.equals("전체")) {
-				sql="select * from "
-					+ "(select rownum as rnum, a.* from "
-					+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
-					+ "from sp_product, sp_user "
-					+ "where sp_product.user_idx=sp_user.user_idx "
-					+ "order by product_state desc, product_idx desc) a order by product_state desc) b "
-					+ "where rnum between ? and ?";
-				ps=conn.prepareStatement(sql);
-				ps.setInt(1, start);
-				ps.setInt(2, end);
+				if(addr.equals("전체")) {
+					sql="select * from "
+							+ "(select rownum as rnum, a.* from "
+							+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, product_state "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx "
+							+ "order by product_state desc, product_idx desc) a order by product_state desc) b "
+							+ "where rnum between ? and ?";
+					ps=conn.prepareStatement(sql);
+					ps.setInt(1, start);
+					ps.setInt(2, end);
+				}else {
+					sql="select * from "
+							+ "(select rownum as rnum, a.* from "
+							+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, substr(user_addr, 1, 2) as uaddr, product_state "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx "
+							+ "order by product_state desc, product_idx desc) a where uaddr=? order by product_state desc) b "
+							+ "where rnum between ? and ?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, addr);
+					ps.setInt(2, start);
+					ps.setInt(3, end);
+				}
 			}else {
-				sql="select * from "
-					+ "(select rownum as rnum, a.* from "
-					+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
-					+ "from sp_product, sp_user "
-					+ "where sp_product.user_idx=sp_user.user_idx and product_category=? "
-					+ "order by product_state desc, product_idx desc) a order by product_state desc) b "
-					+ "where rnum between ? and ?";
-				ps=conn.prepareStatement(sql);
-				ps.setString(1, pCategory);
-				ps.setInt(2, start);
-				ps.setInt(3, end);
+				if(addr.equals("전체")) {
+					sql="select * from "
+							+ "(select rownum as rnum, a.* from "
+							+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, product_state "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx and product_category=? "
+							+ "order by product_state desc, product_idx desc) a order by product_state desc) b "
+							+ "where rnum between ? and ?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, pCategory);
+					ps.setInt(2, start);
+					ps.setInt(3, end);
+				}else {
+					sql="select * from "
+							+ "(select rownum as rnum, a.* from "
+							+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, substr(user_addr, 1, 2) as uaddr, product_state "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx and product_category=? "
+							+ "order by product_state desc, product_idx desc) a where uaddr=? order by product_state desc) b "
+							+ "where rnum between ? and ?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, pCategory);
+					ps.setString(2, addr);
+					ps.setInt(3, start);
+					ps.setInt(4, end);
+				}
 			}
 			rs=ps.executeQuery();
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
@@ -372,6 +372,7 @@ public class ProductDAO {
 				pdto.setProduct_price(rs.getInt("product_price"));
 				pdto.setUser_nickname(rs.getString("user_nickname"));
 				pdto.setProduct_state(rs.getInt("product_state"));
+				pdto.setUser_addr(rs.getString("user_addr"));
 				arr.add(pdto);
 			}
 			return arr;
@@ -435,14 +436,28 @@ public class ProductDAO {
 	}
 	
 	/**같은 판매자의 다른 상품 리스트*/
-	public ArrayList<ProductDTO> ssopList(int seller_uidx, int pidx){
+	public ArrayList<ProductDTO> ssopList(int seller_uidx, int pidx, String addr){
 		try {
 			
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from sp_product where user_idx=? and product_state=1 and product_idx<>?";
-			ps=conn.prepareStatement(sql);
-			ps.setInt(1, seller_uidx);
-			ps.setInt(2, pidx);
+			if(addr.equals("전체")) {
+				String sql="select product_idx, product_img, product_subject, user_idx "
+						+ "from sp_product "
+						+ "where user_idx=? and product_state=1 and product_idx<>?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, seller_uidx);
+				ps.setInt(2, pidx);
+			}else {
+				String sql="select * from "
+						+ "(select product_idx, product_img, product_subject, sp_product.user_idx, substr(user_addr, 1, 2) as uaddr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? and product_state=1 and product_idx<>?) a "
+						+ "where uaddr=?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, seller_uidx);
+				ps.setInt(2, pidx);
+				ps.setString(3, addr);
+			}
 			rs=ps.executeQuery();
 			
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
@@ -470,14 +485,28 @@ public class ProductDAO {
 	}
 	
 	/**연관 상품 리스트*/
-	public ArrayList<ProductDTO> lpList(String category,int pidx){
+	public ArrayList<ProductDTO> lpList(String category,int pidx, String addr){
 		try {
 			
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from sp_product where product_category=? and product_state=1 and product_idx<>?";
-			ps=conn.prepareStatement(sql);
-			ps.setString(1, category);
-			ps.setInt(2, pidx);
+			if(addr.equals("전체")) {
+				String sql="select product_idx, product_img, product_subject, user_idx "
+						+ "from sp_product "
+						+ "where product_category=? and product_state=1 and product_idx<>?";
+				ps=conn.prepareStatement(sql);
+				ps.setString(1, category);
+				ps.setInt(2, pidx);
+			}else {
+				String sql="select * from "
+						+ "(select product_idx, product_img, product_subject, sp_product.user_idx, substr(user_addr, 1, 2) as uaddr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and product_category=? and product_state=1 and product_idx<>?) a "
+						+ "where uaddr=?";
+				ps=conn.prepareStatement(sql);
+				ps.setString(1, category);
+				ps.setInt(2, pidx);
+				ps.setString(3, addr);
+			}
 			
 			rs=ps.executeQuery();
 			
@@ -555,17 +584,38 @@ public class ProductDAO {
 	}
 	
 	/**카테고리 리스트 총 판매글 수*/
-	public int getTotalCntC(String pCategory) {
+	public int getTotalCntC(String pCategory, String addr) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="";
 			if(pCategory.equals("전체")) {
-				sql="select count(*) from sp_product";
-				ps=conn.prepareStatement(sql);
+				if(addr.equals("전체")) {
+					String sql="select count(*) from sp_product";
+					ps=conn.prepareStatement(sql);
+				}else {
+					String sql="select count(*) from "
+							+ "(select substr(user_addr, 1, 2) as uaddr "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx) a "
+							+ "where uaddr=?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, addr);
+				}
 			}else {
-				sql="select count(*) from sp_product where product_category=?";
-				ps=conn.prepareStatement(sql);
-				ps.setString(1, pCategory);
+				if(addr.equals("전체")) {
+					String sql="select count(*) from sp_product where product_category=?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, pCategory);
+				}else {
+					String sql="select count(*) from "
+							+ "(select substr(user_addr, 1, 2) as uaddr "
+							+ "from sp_product, sp_user "
+							+ "where sp_product.user_idx=sp_user.user_idx and product_category=?) a "
+							+ "where uaddr=?";
+					ps=conn.prepareStatement(sql);
+					ps.setString(1, pCategory);
+					ps.setString(2, addr);
+				}
+				
 			}
 			rs=ps.executeQuery();
 			rs.next();
@@ -586,18 +636,29 @@ public class ProductDAO {
 	}
 	
 	/**해당 유저 총 판매글 수*/
-	public int getTotalCntU(int uidx) {
+	public int getTotalCntU(int uidx, String addr) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select count(*) from sp_product where user_idx=?";
-			ps=conn.prepareStatement(sql);
-			ps.setInt(1, uidx);
+			if(addr.equals("전체")) {
+				String sql="select count(*) from sp_product where user_idx=?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, uidx);
+			}else {
+				String sql="select count(*) from "
+						+ "(select substr(user_addr, 1, 2) as uaddr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=?) a "
+						+ "where uaddr=?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, uidx);
+				ps.setString(2, addr);
+			}
 			rs=ps.executeQuery();
 			rs.next();
 			return rs.getInt(1)==0?1:rs.getInt(1);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return 4;
+			return 1;
 		}finally {
 			try {
 				if(rs!=null)rs.close();
@@ -611,11 +672,22 @@ public class ProductDAO {
 	
 	
 	/**검색 총 판매글 수*/
-	public int getTotalCntS(String keyword) {
+	public int getTotalCntS(String keyword, String addr) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select count(*) from sp_product where product_subject like '%"+keyword+"%'";
-			ps=conn.prepareStatement(sql);
+			
+			if(addr.equals("전체")) {
+				String sql="select count(*) from sp_product where product_subject like '%"+keyword+"%'";
+				ps=conn.prepareStatement(sql);
+			}else {
+				String sql="select count(*) from "
+						+ "(select substr(user_addr, 1, 2) as uaddr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and product_subject like '%"+keyword+"%') a "
+						+ "where uaddr=?";
+				ps=conn.prepareStatement(sql);
+				ps.setString(1, addr);
+			}
 			rs=ps.executeQuery();
 			rs.next();
 			return rs.getInt(1)==0?1:rs.getInt(1);
@@ -671,7 +743,7 @@ public class ProductDAO {
 				ps.setString(2, pdto.getProduct_tel());
 				ps.setString(3, pdto.getProduct_category());
 				ps.setInt(4, pdto.getProduct_price());
-				ps.setString(5, pdto.getProduct_content());
+				ps.setString(5, pdto.getProduct_content()==null?" ":pdto.getProduct_content());
 				ps.setInt(6, pdto.getProduct_idx());
 			}else {
 				productInfoImgDelete(preimgName);
@@ -681,7 +753,7 @@ public class ProductDAO {
 				ps.setString(2, pdto.getProduct_tel());
 				ps.setString(3, pdto.getProduct_category());
 				ps.setInt(4, pdto.getProduct_price());
-				ps.setString(5, pdto.getProduct_content());
+				ps.setString(5, pdto.getProduct_content()==null?" ":pdto.getProduct_content());
 				ps.setString(6, pdto.getProduct_img());
 				ps.setInt(7, pdto.getProduct_idx());
 			}
@@ -700,9 +772,9 @@ public class ProductDAO {
 		}
 	}
 	
-	/**판매글 삭제시 저장된 이미지 파일 삭제*/
+	/**저장된 이미지 파일 삭제*/
 	public void productInfoImgDelete(String pimg) {
-		String savepath="D:\\personalsemi\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\woodong\\product\\img\\productImg";
+		String savepath="D:\\ezen\\spwoodong\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\woodong\\product\\img\\productImg";
 		File f=new File(savepath+"\\"+pimg);
 		if(f.exists()) {
 			f.delete();
@@ -713,64 +785,24 @@ public class ProductDAO {
 	public int productInfoDelete(int pidx) {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="delete from sp_product where product_idx=?";
+			String sql="select product_img from sp_product where product_idx=?";
 			ps=conn.prepareStatement(sql);
 			ps.setInt(1, pidx);
-			int count=ps.executeUpdate();
-			return count;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-		}finally {
-			try {
-				if(ps!=null)ps.close();
-				if(conn!=null)conn.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-		}
-	}
-	
-	/**판매완료 버튼*/
-	public int soldout(int uidx, int pidx) {
-		try {
-			conn=woodong.db.WoodongDB.getConn();
-			String sql="update sp_product set product_state=0 where product_idx=? and user_idx=?";
-			ps=conn.prepareStatement(sql);
-			ps.setInt(1, pidx);
-			ps.setInt(2, uidx);
-			int count=ps.executeUpdate();
-			return count;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return -1;
-		}finally {
-			try {
-				if(ps!=null)ps.close();
-				if(conn!=null)conn.close();
-			} catch (Exception e2) {
-				// TODO: handle exception
-			}
-		}
-	}
-	
-	/**저장된 이미지 이름*/
-	public ArrayList<String> savedImgNames(){
-		try {
-			conn=woodong.db.WoodongDB.getConn();
-			String sql="select product_img from sp_product";
-			ps=conn.prepareStatement(sql);
 			rs=ps.executeQuery();
-			ArrayList<String> arr=new ArrayList<String>();
 			if(rs.next()) {
-				do {
-					arr.add(rs.getString(1));
-				}while(rs.next());
+				String product_img=rs.getString(1);
+				if(!product_img.equals("imgnone.jpg")) {
+					productInfoImgDelete(product_img);
+				}
 			}
-			return arr;
+			sql="delete from sp_product where product_idx=?";
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, pidx);
+			int count=ps.executeUpdate();
+			return count;
 		} catch (Exception e) {
 			e.printStackTrace();
-			return null;
+			return -1;
 		}finally {
 			try {
 				if(rs!=null)rs.close();
@@ -782,41 +814,107 @@ public class ProductDAO {
 		}
 	}
 	
+	/**물품 삭제 메서드*/
+	public int product_delete(String[] ck_idx) {
+		try {
+			conn = woodong.db.WoodongDB.getConn();
+			
+			int count = 0;
+			for(String idx : ck_idx) {
+				String sql = "delete from sp_product where product_idx = ?";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, idx);
+				count += ps.executeUpdate();
+			}
+			return count;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return-1;
+		}finally {
+			try {
+				if(ps != null) ps.close();
+				if(conn != null) conn.close();
+			} catch (Exception e2) {
+				e2.printStackTrace();
+			}
+		}
+	}
+	
+	/**판매완료 버튼*/
+	public int soldout(int pidx) {
+		try {
+			conn=woodong.db.WoodongDB.getConn();
+			String sql="update sp_product set product_state=0 where product_idx=?";
+			ps=conn.prepareStatement(sql);
+			ps.setInt(1, pidx);
+			int count=ps.executeUpdate();
+			return count;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return -1;
+		}finally {
+			try {
+				if(ps!=null)ps.close();
+				if(conn!=null)conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+	}
+	
 	/**키워드 검색 결과 리스트*/
-    public ArrayList<ProductDTO> main_Product_Search(String searchWord, int cp, int listSize) {
+    public ArrayList<ProductDTO> main_Product_Search(String searchWord, int cp, int listSize, String addr) {
          
          try {
         	int start=(cp-1)*listSize+1;
  			int end=cp*listSize;
  			
-            conn = woodong.db.WoodongDB.getConn();
-            String sql = "select * from "
-            		+ "(select rownum as rnum, a.* from "
-            		+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
-            		+ "from sp_product, sp_user "
-            		+ "where sp_product.user_idx=sp_user.user_idx and product_subject like ? "
-            		+ "order by product_state desc) a) b "
-            		+ "where rnum between ? and ?";
-
-            ps = conn.prepareStatement(sql);
-            ps.setString(1, "%" + searchWord + "%");
-            ps.setInt(2, start);
-            ps.setInt(3, end);
+ 			conn = woodong.db.WoodongDB.getConn();
+ 			
+ 			if(addr.equals("전체")) {
+ 				String sql = "select * from "
+		        		+ "(select rownum as rnum, a.* from "
+		        		+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, product_state "
+		        		+ "from sp_product, sp_user "
+		        		+ "where sp_product.user_idx=sp_user.user_idx and product_subject like ? "
+		        		+ "order by product_state desc) a) b "
+		        		+ "where rnum between ? and ?";
+ 				
+ 				ps = conn.prepareStatement(sql);
+ 		        ps.setString(1, "%" + searchWord + "%");
+ 		        ps.setInt(2, start);
+ 		        ps.setInt(3, end);
+ 			}else {
+		        String sql = "select * from "
+		        		+ "(select rownum as rnum, a.* from "
+		        		+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, substr(user_addr, 1, 2) as uaddr, product_state "
+		        		+ "from sp_product, sp_user "
+		        		+ "where sp_product.user_idx=sp_user.user_idx and product_subject like ? "
+		        		+ "order by product_state desc) a where uaddr=?) b "
+		        		+ "where rnum between ? and ?";
+		
+		        ps = conn.prepareStatement(sql);
+		        ps.setString(1, "%" + searchWord + "%");
+		        ps.setString(2, addr);
+		        ps.setInt(3, start);
+		        ps.setInt(4, end);
+ 			}
             rs = ps.executeQuery();
-               
             
             ArrayList<ProductDTO> search = new ArrayList<ProductDTO>();
             
             while (rs.next()) {
                ProductDTO dto = new ProductDTO();
                dto.setProduct_idx(rs.getInt("product_idx"));
-            dto.setProduct_img(rs.getString("product_img"));
-            dto.setProduct_subject(rs.getString("product_subject"));
-            dto.setProduct_price(rs.getInt("product_price"));
-            dto.setUser_nickname(rs.getString("user_nickname"));
-            dto.setProduct_state(rs.getInt("product_state"));
+	           dto.setProduct_img(rs.getString("product_img"));
+	           dto.setProduct_subject(rs.getString("product_subject"));
+	           dto.setProduct_price(rs.getInt("product_price"));
+	           dto.setUser_nickname(rs.getString("user_nickname"));
+	           dto.setProduct_state(rs.getInt("product_state"));
+	           dto.setUser_addr(rs.getString("user_addr"));
             
-            search.add(dto);
+	           search.add(dto);
             }
             return search;
          } catch (Exception e) {
@@ -1009,14 +1107,29 @@ public class ProductDAO {
 	}
 	
 	/** 메인 화면 인기 물품 목록 */
-	public ArrayList<ProductDTO> mainHotList() {
+	public ArrayList<ProductDTO> mainHotList(String addr) {
 		try {
 			conn = woodong.db.WoodongDB.getConn();
-			String sql = "select * from " + "(select rownum as r_num, a.* from "
-					+ "(select product_idx,product_img, product_subject, product_price, user_nickname "
-					+ "from sp_product, sp_user " + "where sp_product.user_idx = sp_user.user_idx "
-					+ "order by product_readnum desc) a) b " + "where r_num <= 8";
-			ps = conn.prepareStatement(sql);
+			if(addr.equals("전체")) {
+				String sql = "select * from "
+						+ "(select rownum as r_num, a.* from "
+						+ "(select product_idx,product_img, product_subject, product_price, user_nickname, user_addr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx = sp_user.user_idx and product_state=1 "
+						+ "order by product_readnum desc) a) b "
+						+ "where r_num <= 8";
+				ps = conn.prepareStatement(sql);
+			}else {
+				String sql = "select * from "
+						+ "(select rownum as r_num, a.* from "
+						+ "(select product_idx,product_img, product_subject, product_price, user_nickname, user_addr, substr(user_addr, 1, 2) as uaddr "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx = sp_user.user_idx and product_state=1 "
+						+ "order by product_readnum desc) a where uaddr=?) b "
+						+ "where r_num <= 8";
+				ps = conn.prepareStatement(sql);
+				ps.setString(1, addr);
+			}
 			rs = ps.executeQuery();
 
 			ArrayList<ProductDTO> arr = new ArrayList<>();
@@ -1027,6 +1140,7 @@ public class ProductDAO {
 				dto.setProduct_subject(rs.getString("product_subject"));
 				dto.setProduct_price(rs.getInt("product_price"));
 				dto.setUser_nickname(rs.getString("user_nickname"));
+				dto.setUser_addr(rs.getString("user_addr"));
 				
 				arr.add(dto);
 			}
@@ -1051,7 +1165,9 @@ public class ProductDAO {
 	public ArrayList<ProductDTO> subView(){
 		try {
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from sp_product,sp_user where sp_product.user_idx=sp_user.user_idx order by sp_product.product_state desc, sp_product.product_readnum desc";
+			String sql="select * from sp_product,sp_user "
+					+ "where sp_product.user_idx=sp_user.user_idx and sp_product.product_state=1 "
+					+ "order by sp_product.product_readnum desc";
 			ps=conn.prepareStatement(sql);
 			rs=ps.executeQuery();
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
@@ -1062,6 +1178,7 @@ public class ProductDAO {
 				dto.setProduct_subject(rs.getString("product_subject"));
 				dto.setProduct_price(rs.getInt("product_price"));
 				dto.setUser_nickname(rs.getString("user_nickname"));
+				dto.setUser_addr(rs.getString("user_addr"));
 				
 				arr.add(dto);
 			}
@@ -1080,23 +1197,39 @@ public class ProductDAO {
 	}
 	
 	/**동일 유저 다른 판매상품 리스트 페이지*/
-	public ArrayList<ProductDTO> samesellerListPage(int uidx, int cp, int listSize){
+	public ArrayList<ProductDTO> samesellerListPage(int uidx, int cp, int listSize, String addr){
 		try {
 			int start=(cp-1)*listSize+1;
 			int end=cp*listSize;
 			
 			conn=woodong.db.WoodongDB.getConn();
-			String sql="select * from "
-					+ "(select rownum as rnum, a.* from "
-					+ "(select product_idx, product_img, product_subject, product_price, user_nickname, product_state "
-					+ "from sp_product, sp_user "
-					+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? "
-					+ "order by product_state desc) a) b "
-					+ "where rnum between ? and ?";
-			ps=conn.prepareStatement(sql);
-			ps.setInt(1, uidx);
-			ps.setInt(2, start);
-			ps.setInt(3, end);
+			
+			if(addr.equals("전체")) {
+				String sql="select * from "
+						+ "(select rownum as rnum, a.* from "
+						+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr, product_state "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? "
+						+ "order by product_state desc) a) b "
+						+ "where rnum between ? and ?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, uidx);
+				ps.setInt(2, start);
+				ps.setInt(3, end);
+			}else {
+				String sql="select * from "
+						+ "(select rownum as rnum, a.* from "
+						+ "(select product_idx, product_img, product_subject, product_price, user_nickname, user_addr,substr(user_addr, 1, 2) as uaddr, product_state "
+						+ "from sp_product, sp_user "
+						+ "where sp_product.user_idx=sp_user.user_idx and sp_product.user_idx=? "
+						+ "order by product_state desc) a where uaddr=?) b "
+						+ "where rnum between ? and ?";
+				ps=conn.prepareStatement(sql);
+				ps.setInt(1, uidx);
+				ps.setString(2, addr);
+				ps.setInt(3, start);
+				ps.setInt(4, end);
+			}
 			rs=ps.executeQuery();
 			ArrayList<ProductDTO> arr=new ArrayList<ProductDTO>();
 			while(rs.next()) {
@@ -1107,6 +1240,7 @@ public class ProductDAO {
 				pdto.setUser_nickname(rs.getString("user_nickname"));
 				pdto.setProduct_state(rs.getInt("product_state"));
 				pdto.setProduct_img(rs.getString("product_img"));
+				pdto.setUser_addr(rs.getString("user_addr"));
 				
 				arr.add(pdto);
 			}
@@ -1122,6 +1256,59 @@ public class ProductDAO {
 			} catch (Exception e2) {
 				// TODO: handle exception
 			}
+		}
+	}
+	
+	/**저장된 이미지 이름*/
+	public ArrayList<String> savedImgNames(){
+		try {
+			conn=woodong.db.WoodongDB.getConn();
+			String sql="select product_img from sp_product";
+			ps=conn.prepareStatement(sql);
+			rs=ps.executeQuery();
+			ArrayList<String> arr=new ArrayList<String>();
+			if(rs.next()) {
+				do {
+					arr.add(rs.getString(1));
+				}while(rs.next());
+			}
+			return arr;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}finally {
+			try {
+				if(rs!=null)rs.close();
+				if(ps!=null)ps.close();
+				if(conn!=null)conn.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+			}
+		}
+	}
+	
+	/**DB에 저장되지 않은 이미지 파일 지우기*/
+	public void deleteNotSavedImg() {
+		try {
+			ArrayList<String> savedImgs=savedImgNames();
+			String imgDir="D:\\ezen\\spwoodong\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\woodong\\product\\img\\productImg";
+			File f=new File(imgDir);
+			if(f.exists()) {
+				String[] files=f.list();
+				ArrayList<String> fileList=new ArrayList<String>();
+				for(int i=0; i<files.length; i++) {
+					fileList.add(files[i]);
+				}
+				fileList.removeAll(savedImgs);
+				for(int i=0; i<fileList.size(); i++) {
+					File removeFile=new File(imgDir+"\\"+fileList.get(i));
+					if(removeFile.exists()&&!removeFile.getName().equals("imgnone.jpg")) {
+						removeFile.delete();
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 	

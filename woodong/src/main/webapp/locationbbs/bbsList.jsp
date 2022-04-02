@@ -69,7 +69,7 @@ body{
 	padding-top: 200px;
 	margin-bottom: 50px;
 }
-h2{
+#leftside h2{
 	text-align: center;
 }
 #leftside{

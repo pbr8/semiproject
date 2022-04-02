@@ -17,9 +17,10 @@ public class ProductReportDAO {
 		try {
 			conn=woodong.db.WoodongDB.getConn();
 			
-			String sql="select user_idx from sp_p_report where product_idx=?";
+			String sql="select * from sp_p_report where product_idx=? and user_idx=?";
 			ps=conn.prepareStatement(sql);
 			ps.setInt(1, pidx);
+			ps.setInt(2, uidx);
 			rs=ps.executeQuery();
 			int count=0;
 			if(!rs.next()) {

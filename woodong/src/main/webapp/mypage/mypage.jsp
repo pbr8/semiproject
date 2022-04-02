@@ -66,9 +66,6 @@ label {
 	text-align: center;
 }
 
-hr {
-	width: 1000px;
-}
 
 #my_center {
 	border-collapse: separate;

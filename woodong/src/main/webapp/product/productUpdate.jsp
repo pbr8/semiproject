@@ -4,7 +4,15 @@
 <jsp:useBean id="pdao" class="woodong.product.ProductDAO"></jsp:useBean>>
 <%
 request.setCharacterEncoding("utf-8"); 
-
+String userid=(String)session.getAttribute("sid");
+if(userid==null||userid.equals("")){
+	%>
+	<script>
+	alert('로그인 후 이용 가능합니다.');
+	location.href='/woodong';
+	</script>
+	<%
+}
 String s_pidx=request.getParameter("pidx");
 if(s_pidx==null||s_pidx.equals("")){
 	s_pidx="0";

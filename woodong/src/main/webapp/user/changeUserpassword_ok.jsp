@@ -21,21 +21,21 @@ if(result==3){
 	%>
 	<script>
 		window.alert('비밀번호가 일치하지 않습니다!');
-		location.href='changeUserpassword.jsp';
+		location.href='changeUserpassword.jsp?id=<%=id%>';
 	</script>
 	<%
 }else if(result==1){
 	%>
 	<script>
 		window.alert('기존 비밀번호와 동일합니다!');
-		location.href='changeUserpassword.jsp';
+		location.href='changeUserpassword.jsp?id=<%=id%>';
 	</script>
 	<%
 }else if(result<=0){
 	%>
 	<script>
 		window.alert('비밀번호 변경 실패! 미 해결시 고객센터 문의 바람!');
-		location.href='changeUserpassword.jsp';
+		location.href='changeUserpassword.jsp?id=<%=id%>';
 	</script>
 	<%
 }

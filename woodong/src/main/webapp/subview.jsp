@@ -22,7 +22,7 @@ h3{
 }
 #fsize:hover{
 	width: 160px;
-	height: 320px;
+	height: 330px;
 	border: 1px solid black;
 }
 .product_card img{
@@ -58,7 +58,7 @@ h3{
 }
 #fsize{
 	width: 160px;
-	height: 320px;
+	height: 330px;
 	border: 1px solid #DCDCDC;
 }
 #ftext{
@@ -74,37 +74,49 @@ h3{
 }
 </style>
 <article id="rightside">
-	<fieldset id="fsize">
-		<h3>실시간 인기상품</h3>
+	
 		<%
 		ArrayList<ProductDTO> parr=pdao.subView();
+		if(parr!=null&&parr.size()>0){
+			%>
+			<fieldset id="fsize">
+			<h3>실시간 인기상품</h3>
+			<div class="product_card">
+		        <a href="/woodong/product/productInfo.jsp?pidx=<%=parr.get(0).getProduct_idx()%>">
+		          <img src="/woodong/product/img/productImg/<%=parr.get(0).getProduct_img() %>" alt="상품 이미지" style="border: 1px solid #DCDCDC;"><br>
+		          <div class="product_card_title">
+		            <%=parr.get(0).getProduct_subject() %>
+		          </div>          
+		          <div class="product_card_price_div">
+					<%=parr.get(0).getProduct_price() %>원
+		          </div>
+		          <div class="product_card_seller">
+		            판매자 : <%=parr.get(0).getUser_nickname() %>
+		          </div>
+		          <div class="product_card_seller" style="color: gray; margin-top: 3px;">
+	          			<%=parr.get(0).getUser_addr() %>
+          		  </div>
+		        </a>
+		      </div>
+	      </fieldset>
+	      <%
+		}
 		%>
-		<div class="product_card">
-        <a href="/woodong/product/productInfo.jsp?pidx=<%=parr.get(0).getProduct_idx()%>">
-          <img src="/woodong/product/img/productImg/<%=parr.get(0).getProduct_img() %>" alt="상품 이미지"><br>
-          <div class="product_card_title">
-            <%=parr.get(0).getProduct_subject() %>
-          </div>          
-          <div class="product_card_price_div">
-			<%=parr.get(0).getProduct_price() %>원
-          </div>
-          <div class="product_card_seller">
-            판매자 : <%=parr.get(0).getUser_nickname() %>
-          </div>
-        </a>
-      </div>
-      </fieldset>
       <br>
       <fieldset id="ftext">
-      <label>우리 게시판 인기글</label>
       <table id="subTable">
+      		<thead>
+      			<tr>
+      				<th style="border-bottom: 1px solid gray;">우리 게시판 인기글</th>
+      			</tr>
+      		</thead>
 			<tbody>
 			<%
 			ArrayList<BbsDTO> rarr=bdao2.readnumList();	
 				for(int i=0;i<rarr.size();i++){
 					%>
 					<tr>
-						<td>
+						<td style="border-bottom: 1px solid #DCDCDC;">
 						<%
 						for(int j=1;j<=rarr.get(i).getBbs_lev();j++){
 							out.println("&nbsp;&nbsp;");
@@ -120,21 +132,30 @@ h3{
 		</table>
      </fieldset>
      <br>
-     <fieldset id="fsize">
-		<h3>실시간 인기상품</h3>
-		<div class="product_card">
-        <a href="/woodong/product/productInfo.jsp?pidx=<%=parr.get(1).getProduct_idx()%>">
-          <img src="/woodong/product/img/productImg/<%=parr.get(1).getProduct_img() %>" alt="상품 이미지"><br>
-          <div class="product_card_title">
-            <%=parr.get(1).getProduct_subject() %>
-          </div>          
-          <div class="product_card_price_div">
-			<%=parr.get(1).getProduct_price() %>원
-          </div>
-          <div class="product_card_seller">
-            판매자 : <%=parr.get(1).getUser_nickname() %>
-          </div>
-        </a>
-      </div>
-      </fieldset>
+     <%
+     if(parr!=null&&parr.size()>1){
+    	 %>
+    	 <fieldset id="fsize">
+	 		<h3>실시간 인기상품</h3>
+	 		<div class="product_card">
+	         <a href="/woodong/product/productInfo.jsp?pidx=<%=parr.get(1).getProduct_idx()%>">
+	           <img src="/woodong/product/img/productImg/<%=parr.get(1).getProduct_img() %>" alt="상품 이미지"><br>
+	           <div class="product_card_title">
+	             <%=parr.get(1).getProduct_subject() %>
+	           </div>          
+	           <div class="product_card_price_div">
+	 			<%=parr.get(1).getProduct_price() %>원
+	           </div>
+	           <div class="product_card_seller">
+	             판매자 : <%=parr.get(1).getUser_nickname() %>
+	           </div>
+	           <div class="product_card_seller" style="color: gray; margin-top: 3px;">
+          			<%=parr.get(1).getUser_addr() %>
+        	   </div>
+	         </a>
+	       </div>
+       </fieldset>
+       <%
+     }
+     %>
 	</article>
