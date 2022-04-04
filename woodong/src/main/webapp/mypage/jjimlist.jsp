@@ -58,7 +58,7 @@ body {
    margin : 0px auto;
 }
 
-body nav hr {
+.headline {
    width: 1000px;
 }
 
@@ -148,9 +148,8 @@ a {
 }
 </style>
 
-<body>
-<body>
    <%@include file="/header.jsp"%>
+<body>
 
    <form action="jjim_delete_ok.jsp">
       <article>
@@ -177,12 +176,12 @@ a {
 
          </nav>
       </article>
-      <hr>
+      <hr class="headline">
       <div id="bt_div">
       <label><input type="checkbox" onclick='selectAll(this)' />
          전체선택</label> <input type="submit" value="선택삭제" id="bt_c">
       </div>
-      <hr>
+      <hr class="headline">
       <section id="c_section">
          <table class="list_table">
             <tr>

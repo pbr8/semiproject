@@ -37,7 +37,6 @@ const selectA = () => {
 const listsize = () => {
     const getListsize = document.getElementById('getListsize').value;
     
-	
     if(getListsize==5){
     	location.href = 'bbsList.jsp?getListsize='+getListsize;
     }else if(getListsize==10){

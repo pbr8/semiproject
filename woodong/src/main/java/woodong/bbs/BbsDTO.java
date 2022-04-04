@@ -12,7 +12,7 @@ public class BbsDTO {
 	private int bbs_step;
 	private int bbs_admin;
 	private int user_idx;
-	private String user_nickname;	//hmj 03-21 22:49 추가
+	private String user_nickname;
 	private String user_addr;
 	private String user_name;
 	

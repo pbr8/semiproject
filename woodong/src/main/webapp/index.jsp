@@ -11,7 +11,6 @@
 <jsp:useBean id="phdao" class="woodong.product.heart.ProductHeartDAO" scope="session"></jsp:useBean>
 <jsp:useBean id="udao" class="woodong.user.UserDAO" scope="session"></jsp:useBean>
 <%
-pdao.deleteNotSavedImg();
 
 String userid=(String)session.getAttribute("sid");
 UserDTO udto=udao.findUserInfoByUserId(userid);

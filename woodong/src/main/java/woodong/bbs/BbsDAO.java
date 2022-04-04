@@ -96,10 +96,10 @@ public class BbsDAO {
 	            } catch (Exception e2) {
 	               e2.printStackTrace();
 	            }
+	            
 	         }
+	      
 	   }
-	
-	/**검색 메서드*/
 	
 	/**등록된 판매 글 수 구하는 메소드*/
 	public int getTotalCnt(String selectVal, String searchVal) {
@@ -132,7 +132,6 @@ public class BbsDAO {
 			rs.next();
 			int count = rs.getInt(1);
 			return count == 0 ? 1: count;
-			
 			
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -247,7 +246,7 @@ public class BbsDAO {
 			}
 		}
 	}
-	
+			
 	/**ref 마지막 값 구하기 메서드*/ 
 	public int getMaxRef() {
 		try {
@@ -310,7 +309,7 @@ public class BbsDAO {
 		public int localbbsWrite(BbsDTO dto,int user_idx) {
 			try {
 				conn=woodong.db.WoodongDB.getConn();
-				int maxref=localgetMaxRef();
+				int maxref=getMaxRef();
 				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,?)";
 				ps=conn.prepareStatement(sql);
 				ps.setString(1, dto.getBbs_subject());
@@ -330,49 +329,6 @@ public class BbsDAO {
 			}
 		}
 			
-	//ref 마지막 구하는 메서드
-		public int localgetMaxRef() {
-			try {
-				String sql="select max(bbs_ref) from sp_bbs";
-				ps=conn.prepareStatement(sql);
-				rs=ps.executeQuery();
-				int ref=0;
-				if(rs.next()) {
-					ref=rs.getInt(1);
-				}
-				return ref;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return 0;
-			}finally {
-				try {
-					if(rs!=null)rs.close();
-					if(ps!=null)ps.close();
-				}catch(Exception e2) {}
-			}
-		}
-		//글쓰기 메서드
-		public int bbsWrite(BbsDTO dto) {
-			try {
-				conn=woodong.db.WoodongDB.getConn();
-				int maxref=localgetMaxRef();
-				String sql="insert into sp_bbs values(sp_bbs_idx_seq.nextval,?,?,0,sysdate,?,0,0,0,2)";
-				ps=conn.prepareStatement(sql);
-				ps.setString(1, dto.getBbs_subject());
-				ps.setString(2, dto.getBbs_content());
-				ps.setInt(3, maxref+1);
-				int count=ps.executeUpdate();
-				return count;
-			}catch(Exception e) {
-				e.printStackTrace();
-				return -1;
-			}finally {
-				try {
-					if(ps!=null)ps.close();
-					if(conn!=null)conn.close();
-				}catch(Exception e2) {}
-			}
-		}
 		//step 수정 메서드
 		public void localUpdateStep(int ref,int step) {
 			try {
@@ -435,60 +391,7 @@ public class BbsDAO {
 				}catch(Exception e2) {}
 			}
 		}
-//		//목록 메소드
-//		public ArrayList<BbsDTO> localbbsList(int cp,int ls,String selectVal,String searchVal){
-//			try {
-//				conn=woodong.db.WoodongDB.getConn();
-//				
-//				 int start=(cp-1)*ls+1;
-//				 int end=cp*ls;
-//				 
-//				 String sql="";
-//				 
-//				 if(selectVal==null) {
-//					 sql="select * from ("
-//						 		+ "select rownum as rnum,a.* from ("
-//						 		+ "select * from sp_bbs order by bbs_admin desc, bbs_ref desc, bbs_step asc) a) b where rnum>=? and rnum<=?";
-//					 ps=conn.prepareStatement(sql);
-//					 ps.setInt(1, start);
-//					 ps.setInt(2, end);
-//				 }else {
-//					 sql = "select * from sp_bbs bs,sp_user su where su.user_idx=bs.useridx and su."+selectVal+"=?";
-//					 ps=conn.prepareStatement(sql);
-//					 ps.setString(1, searchVal);
-//				 }
-//				
-//				 
-//				 rs=ps.executeQuery();
-//				 
-//				 ArrayList<BbsDTO> arr=new ArrayList<BbsDTO>();
-//				 while(rs.next()) {
-//					 int idx=rs.getInt("bbs_idx");
-//					 String subject=rs.getString("bbs_subject");
-//					 String content=rs.getString("bbs_content");
-//					 int readnum=rs.getInt("bbs_readnum");
-//					 java.sql.Date writedate=rs.getDate("bbs_writedate");
-//					 int ref=rs.getInt("bbs_ref");
-//					 int lev=rs.getInt("bbs_lev");
-//					 int step=rs.getInt("bbs_step");
-//					 int admin=rs.getInt("bbs_admin");
-//					 int user_idx=rs.getInt("user_idx");
-//					 
-//					 BbsDTO dto=new BbsDTO(idx, subject, content, readnum, writedate, ref, lev, step, admin, user_idx);
-//					 arr.add(dto);
-//				 }
-//				 return arr;
-//			}catch(Exception e) {
-//				e.printStackTrace();
-//				return null;
-//			}finally {
-//				try {
-//					if(rs!=null)rs.close();
-//					if(ps!=null)ps.close();
-//					if(conn!=null)conn.close();
-//				}catch(Exception e2) {}
-//			}
-//		}
+
 		//본문(content) 보기 메서드
 		public BbsDTO bbsContent(int idx) {
 			try {
@@ -620,7 +523,6 @@ public class BbsDAO {
 				}catch(Exception e2) {}
 			}
 		}
-	
 }
 
 

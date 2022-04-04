@@ -1287,30 +1287,6 @@ public class ProductDAO {
 		}
 	}
 	
-	/**DB에 저장되지 않은 이미지 파일 지우기*/
-	public void deleteNotSavedImg() {
-		try {
-			ArrayList<String> savedImgs=savedImgNames();
-			String imgDir="D:\\ezen\\spwoodong\\.metadata\\.plugins\\org.eclipse.wst.server.core\\tmp0\\wtpwebapps\\woodong\\product\\img\\productImg";
-			File f=new File(imgDir);
-			if(f.exists()) {
-				String[] files=f.list();
-				ArrayList<String> fileList=new ArrayList<String>();
-				for(int i=0; i<files.length; i++) {
-					fileList.add(files[i]);
-				}
-				fileList.removeAll(savedImgs);
-				for(int i=0; i<fileList.size(); i++) {
-					File removeFile=new File(imgDir+"\\"+fileList.get(i));
-					if(removeFile.exists()&&!removeFile.getName().equals("imgnone.jpg")) {
-						removeFile.delete();
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
 	
 }
 

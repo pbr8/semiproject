@@ -10,7 +10,6 @@
 <%
 request.setCharacterEncoding("utf-8");
 
-
 String userid=(String)session.getAttribute("sid");
 UserDTO udto=udao.findUserInfoByUserId(userid);
 
@@ -77,16 +76,20 @@ function addReport(){
 		return;
 	}
 	var rcontent=window.prompt('신고 내용을 입력해주십시오.');
-	if(rcontent!=null){
-		window.location.href='productInfoReport_ok.jsp?rcontent='+rcontent+'&pidx=<%=pdto.getProduct_idx()%>';
+	if(rcontent==null){
+		return false;
+	}else if(rcontent==''){
+		alert('신고 내용을 입력해주세요.');
+		return false;
 	}
+	window.location.href='productInfoReport_ok.jsp?rcontent='+rcontent+'&pidx=<%=pdto.getProduct_idx()%>';
 }
 function goDelete(){
 	var result=window.confirm('정말로 삭제하시겠습니까?');
 	if(!result){
 		return;
 	}else{
-		location.href='productDelete_ok.jsp?pidx=<%=pdto.getProduct_idx()%>&pimg=<%=pdto.getProduct_img()%>'
+		location.href='productDelete_ok.jsp?pidx=<%=pdto.getProduct_idx()%>&pimg=<%=pdto.getProduct_img()%>';
 	}
 }
 function goUpdate(){
@@ -145,7 +148,7 @@ function soldOut(){
 					<td class="sinfo_subject">판매자</td><td><%=pdto.getUser_nickname() %></td>
 				</tr>
 				<tr>
-					<td class="sinfo_subject">연락처</td><td><%=userid==null?"***-****-****":pdto.getProduct_tel() %></td>
+					<td class="sinfo_subject">연락처</td><td><%=userid==null?"로그인 후 열람 가능":pdto.getProduct_tel() %></td>
 				</tr>
 				<tr>
 					<td class="sinfo_subject">거래지역</td><td><%=pdto.getUser_addr() %></td>
@@ -158,7 +161,6 @@ function soldOut(){
 				</tr>
 			</table>
 			<hr>
-			
 			
 				<%
 				if(pdto!=null&&pdto.getUser_idx()==udto.getUser_idx()){

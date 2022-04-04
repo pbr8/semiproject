@@ -7,7 +7,6 @@ pageEncoding="UTF-8"%>
 <jsp:useBean id="jjim_list_deleteDAO" class="woodong.product.heart.ProductHeartDAO" scope="session"></jsp:useBean>
 <jsp:useBean id="user_int" class="woodong.user.UserDAO"></jsp:useBean>
 
-
 <%
 String uid = (String)session.getAttribute("sid");
 int uidx = user_int.findUserIdxByUserId(uid);
@@ -19,7 +18,8 @@ if(sel==null || sel.length ==0){
 alert('리스트를 선택해주세요!')
 location.href = "jjimlist.jsp"
 </script>
-<%}else{
+<%
+}else{
 jjim_list_deleteDAO.jjim_list_delete(sel, uidx);
 %>
 <script>
